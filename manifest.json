@@ -1,0 +1,19 @@
+{
+	"manifest_version":2,
+	"name":"Trellomino",
+	"version":"0.1",
+	"background":{
+		"scripts":[
+			"background.js"
+		]
+	},
+	"browser_action" : {
+		
+	},
+	"permissions":[
+		"tabs"
+	],
+	"web_accessible_resources" : [
+		"stats.html"
+	]
+}
