@@ -17,6 +17,49 @@ var opts = {
 
 
 
+function Data(data) {
+	this._data = data;
+	this._times = [];
+}
+
+Data.prototype.filter = function() {
+	this._times = [];
+	var thiz = this;
+	console.log("orgs");
+	$.each(this._data.orgs, function(index, org) {
+		console.log("boards");
+		$.each(org.boards, function(index, board) {
+			console.log("lists");
+			$.each(board.lists, function(index, list) {
+				console.log("cards");
+				$.each(list.cards, function(index, card) {
+					console.log("times");
+					$.each(card.times, function(index, time) {
+						thiz._times.push(time);
+					});
+				});
+			});
+		});
+	});
+}
+
+Data.prototype.groupSpent = function(idFunction, labelFunction) {
+	var series = {};
+	$.each(this._times, function(index, time) {
+		var id = idFunction(time);
+		var label = labelFunction(time);
+		if (!(id in series)) {
+			serie = {};
+			serie.id = id;
+			serie.label = label;
+			serie.spent = 0;
+			series[id] = serie;
+		}
+		series[id].spent += time.spent;
+	});
+	return series;
+}
+
 
 
 
@@ -30,10 +73,22 @@ var controller = {
 	label : null,
 	
 	start : function(data) {
-		this.data = data;
+		this.data = new Data(data);
 		console.log("Start controller");
 
 		this.initHeader();
+
+		console.log("Filter");
+		this.data.filter();
+		
+		var series = this.data.groupSpent(function(time) {
+			return time.card.list.board.id;
+		}, function(time) {
+			return time.card.list.board.name;
+		});
+		console.log(series);
+		
+		this.graph();
 	},
 	
 	initHeader : function() {
@@ -123,7 +178,7 @@ var controller = {
 		memberSelect.toggle(true);
 		labelSelect.toggle(this.board != null);
 		
-		this.completeSelect(orgSelect, this.org, data.orgs, "name", "Organizations");
+		this.completeSelect(orgSelect, this.org, this.data._data.orgs, "name", "Organizations");
 		if (this.org != null) {
 			this.completeSelect(boardSelect, this.board, this.org.boards, "name", "Boards");
 		}
@@ -136,7 +191,7 @@ var controller = {
 		} else if (this.org != null) {
 			members = this.org.members;
 		} else {
-			members = this.data.members;
+			members = this.data._data.members;
 		}
 		this.completeSelect(memberSelect, this.member, members, "fullName", "Members");
 		if (this.board != null) {
@@ -145,6 +200,7 @@ var controller = {
 	},
 	
 	completeSelect : function(select, selectedValue, values, property, noneLabel) {
+		console.log("Complete select");
 		var html = '<option value="">' + noneLabel + '</option>';
 		$.each(values, function(index, value) {
 			html += '<option value="' + value.id + '">' + value[property] + '</option>';
@@ -155,6 +211,61 @@ var controller = {
 		} else {
 			select.val(selectedValue.id);
 		}
+	},
+	
+	graph : function() {
+	    $('#container').highcharts({
+	        chart: {
+	            plotBackgroundColor: null,
+	            plotBorderWidth: null,
+	            plotShadow: false,
+	            type: 'pie'
+	        },
+	        title: {
+	            text: 'Browser market shares January, 2015 to May, 2015'
+	        },
+	        tooltip: {
+	            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	        },
+	        plotOptions: {
+	            pie: {
+	                allowPointSelect: true,
+	                cursor: 'pointer',
+	                dataLabels: {
+	                    enabled: true,
+	                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+	                    style: {
+	                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+	                    }
+	                }
+	            }
+	        },
+	        series: [{
+	            name: "Brands",
+	            colorByPoint: true,
+	            data: [{
+	                name: "Microsoft Internet Explorer",
+	                y: 56.33
+	            }, {
+	                name: "Chrome",
+	                y: 24.03,
+	                sliced: true,
+	                selected: true
+	            }, {
+	                name: "Firefox",
+	                y: 10.38
+	            }, {
+	                name: "Safari",
+	                y: 4.77
+	            }, {
+	                name: "Opera",
+	                y: 0.91
+	            }, {
+	                name: "Proprietary or Undetectable",
+	                y: 0.2
+	            }]
+	        }]
+	    });
 	}
 }
 
@@ -168,7 +279,6 @@ $(function() {
 });
 
 var callback = function(data) {
-	alert("finish");
 	controller.start(data);
 }
 
@@ -288,11 +398,16 @@ function start() {
 						var dataCard = {};
 						dataCard.id = card.id;
 						dataCard.name = card.name;
-						dataCard.actions = {};
+						dataCard.minDate = null;
+						dataCard.estimate = null;
+						dataCard.times = {};
 						dataCard.members = {};
 						dataCard.list = dataList;
 						dataList.cards[dataCard.id] = dataCard;
 						dataBoard.cards[dataCard.id] = dataCard;
+						
+						var regexp = new RegExp('\\[R\\]$', 'i');
+						dataCard.recurrent = !!regexp.exec(card.name);
 					});
 					
 					substart(dataBoard, data, 0);
@@ -329,17 +444,18 @@ function substart(dataBoard, data, page) {
 		console.log(result);
 
 		$.each(result, function(index, action) {
-			// TODO Plus for Trello regexp
-			var match = true;
+			var regexp = new RegExp('plus!( @[a-zA-Z0-9]+)*( -[0-9]+d)? (-?[0-9]+)/(-?[0-9]+)', 'i');
+			var match = regexp.exec(action.data.text);
 			if (action.data.card.id in dataBoard.cards && match) {
 				var dataCard = dataBoard.cards[action.data.card.id];
 				
-				var dataAction = {};
-				dataAction.id = action.id;
-				dataAction.date = action.date;
-				dataAction.text = action.data.text;
-				dataAction.card = dataCard;
-				dataCard.actions[dataAction.id] = dataAction;
+				var dataTime = {};
+				dataTime.id = action.id;
+				dataTime.date = action.date;
+				dataTime.card = dataCard;
+				dataTime.spent = parseFloat(match[3]);
+				dataTime.remaining = parseFloat(match[4]);
+				dataCard.times[dataTime.id] = dataTime;
 				
 				if (!(action.memberCreator.id in data.members)) {
 					var dataMember = {};
@@ -349,11 +465,16 @@ function substart(dataBoard, data, page) {
 					data.members[dataMember.id] = dataMember;
 				}
 				
-				dataAction.member = data.members[action.memberCreator.id];
-				dataAction.card.members[dataAction.member.id] = dataAction.member;
-				dataAction.card.list.members[dataAction.member.id] = dataAction.member;
-				dataAction.card.list.board.members[dataAction.member.id] = dataAction.member;
-				dataAction.card.list.board.org.members[dataAction.member.id] = dataAction.member;
+				dataTime.member = data.members[action.memberCreator.id];
+				dataTime.card.members[dataTime.member.id] = dataTime.member;
+				dataTime.card.list.members[dataTime.member.id] = dataTime.member;
+				dataTime.card.list.board.members[dataTime.member.id] = dataTime.member;
+				dataTime.card.list.board.org.members[dataTime.member.id] = dataTime.member;
+				
+				if (!dataCard.recurrent && (dataCard.minDate == null || dataTime.date < dataCard.minDate)) {
+					dataCard.estimate = dataTime.remaining;
+					dataCard.minDate = dataTime.date;
+				}
 			}
 		});
 		
@@ -390,10 +511,10 @@ function display(data) {
 				html += "<div style=\"margin-left: 50px\">- " + list.name + "</div>";
 				html += "<div style=\"margin-left: 60px\">+ Cards</div>";
 				$.each(list.cards, function(index, card) {
-					html += "<div style=\"margin-left: 70px\">- " + card.name + "</div>";
+					html += "<div style=\"margin-left: 70px\">- " + card.name + " - " + card.recurrent + " - " + card.estimate + "</div>";
 					html += "<div style=\"margin-left: 80px\">+ Actions</div>";
-					$.each(card.actions, function(index, action) {
-						html += "<div style=\"margin-left: 90px\">- " + action.text + "</div>";
+					$.each(card.times, function(index, time) {
+						html += "<div style=\"margin-left: 90px\">- " + time.date + " : " + time.spent + "/" + time.remaining + "</div>";
 					});
 				});
 			});
