@@ -14,6 +14,6 @@
 		"tabs"
 	],
 	"web_accessible_resources" : [
-		"stats.html"
+		"index.html"
 	]
 }
