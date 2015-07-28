@@ -1,5 +1,5 @@
-PieChart = function(cards, getId, getName) {
-	this._cards = cards;
+PieChart = function(times, getId, getName) {
+	this._times = times;
 	this._getId = getId;
 	this._getName = getName;
 }
@@ -8,14 +8,14 @@ PieChart.prototype.render = function(containerId) {
 	
 	var data = {};
 	var thiz = this;
-	$.each(this._cards, function(index, card) {
-		var id = thiz._getId(card);
+	$.each(this._times, function(index, time) {
+		var id = thiz._getId(time);
 		if (!(id in data)) {
 			data[id] = {};
-			data[id].name = thiz._getName(card);
+			data[id].name = thiz._getName(time);
 			data[id].y = 0;
 		}
-		data[id].y += card.getSpent();
+		data[id].y += time.getSpent();
 	});
 	
 	$("#" + containerId).highcharts({

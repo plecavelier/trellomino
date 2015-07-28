@@ -2,13 +2,20 @@ Card = function(id, name) {
 	this._id = id;
 	this._name = name;
 	this._times = {};
-	this._sortedTimes = null;
 	this._board = null;
 	this._list = null;
+	this._spent = 0;
+	this._delta = 0;
+	this._estimate = 0;
+	this._remaining = 0;
 }
 
 Card.prototype.getId = function() {
 	return this._id;
+}
+
+Card.prototype.getName = function() {
+	return this._name;
 }
 
 Card.prototype.getBoard = function() {
@@ -29,84 +36,93 @@ Card.prototype.getTimes = function() {
 	return this._times;
 }
 
-Card.prototype.getEstimate = function() {
-	var firstTime = this._getFirstTime();
-	if (firstTime == null) {
-		return 0;
-	} else {
-		return firstTime.getEstimateDelta();
-	}
-}
-
 Card.prototype.getSpent = function() {
-	var spent = 0;
-	$.each(this._times, function(index, time) {
-		spent += time.getSpent();
-	});
-	return spent;
-}
-
-Card.prototype.getRemaining = function() {
-	return this.getEstimate() + this.getDelta() - this.getSpent();
+	return this._spent;
 }
 
 Card.prototype.getDelta = function() {
-	if (this._sortedTimes == null) {
-		this._sortTimes();
+	return this._delta;
+}
+
+Card.prototype.getEstimate = function() {
+	return this._estimate;
+}
+
+Card.prototype.getRemaining = function() {
+	return this._remaining;
+}
+
+Card.prototype.calculate = function() {
+	
+	var thiz = this;
+	
+	if (Object.keys(this._times).length == 0) {
+		return;
 	}
+	
+	// Sort times by comment
+	var sortedTimesByComment = this._sortTimes(function(time) {
+		time.getCommentDate().getTime();
+	});
+	
+	// Calculate card estimate
+	if (sortedTimesByComment.length == 0) {
+		this._estimate = 0;
+	} else {
+		this._estimate = sortedTimesByComment[0].getEstimateDelta();
+	}
+	
+	// Set first time by member
 	var members = {};
-	var delta = 0;
-	$.each(this._sortedTimes, function(index, time) {
-		if (!(time.getMember().getId() in members)) {
-			members[time.getMember().getId()] = true;
+	var firstTimes = {};
+	$.each(sortedTimesByComment, function(index, time) {
+		if (time.getMember().getId() in members) {
+			firstTimes[time.getId()] = false;
 		} else {
-			delta += time.getEstimateDelta();
+			members[time.getMember().getId()] = time.getId();
+			firstTimes[time.getId()] = true;
 		}
 	});
-	return delta;
+	
+	// Sort times by tracking date
+	var sortedTimesByDate = this._sortTimes(function(time) {
+		time.getDate().getTime();
+	});
+	
+	// Calculate remaining and delta
+	var previousRemaining = null;
+	$.each(sortedTimesByDate, function(index, time) {
+		if (previousRemaining == null) {
+			time.setRemaining(time.getEstimateDelta() - time.getSpent());
+			time.setDelta(0);
+		} else if (firstTimes[time.getId()]) {
+			time.setRemaining(previousRemaining + time.getEstimateDelta() - time.getSpent());
+			time.setDelta(previousRemaining - time.getRemaining() + time.getSpent());
+		} else {
+			time.setRemaining(previousRemaining - time.getSpent() + time.getEstimateDelta());
+			time.setDelta(time.getEstimateDelta());
+		}
+		previousRemaining = time.getRemaining();
+	});
+	
+	// Card remaining
+	var lastTime = sortedTimesByDate[sortedTimesByDate.length - 1];
+	this._remaining = lastTime.getRemaining();
+	
+	// Card spent and delta
+	$.each(this._times, function(index, time) {
+		thiz._spent += time.getSpent();
+		thiz._delta += time.getDelta();
+	});
 }
 
-Card.prototype._getLastTime = function() {
-	if (this._sortedTimes == null) {
-		this._sortTimes();
-	}
-	if (this._sortedTimes.length == 0) {
-		return null;
-	}
-	return this._sortedTimes[this._sortedTimes.length - 1];
-}
-
-Card.prototype._getFirstTime = function() {
-	if (this._sortedTimes == null) {
-		this._sortTimes();
-	}
-	if (this._sortedTimes.length == 0) {
-		return null;
-	}
-	return this._sortedTimes[0];
-}
-
-Card.prototype._getPreviousTime = function(time) {
-	if (this._sortedTimes == null) {
-		this._sortTimes();
-	}
-	if (this._sortedTimes.length == 0) {
-		return null;
-	}
-	var index = this._sortedTimes.indexOf(time);
-	if (index == 0) {
-		return null;
-	} else {
-		return this._sortedTimes[index - 1];
-	}
-}
-
-Card.prototype._sortTimes = function() {
+Card.prototype._sortTimes = function(fieldFunction) {
 	var thiz = this;
-	this._sortedTimes = Object.keys(this._times).map(function(key) {
+	var sortedTimes = Object.keys(this._times).map(function(key) {
 		return thiz._times[key];
 	});
-	this._sortedTimes = _.sortBy(this._sortedTimes, function(time) {
-		return time._date.getTime();
+	sortedTimes = _.sortBy(sortedTimes, function(time) {
+		return fieldFunction(time);
 	});
+	return sortedTimes.reverse();
 }

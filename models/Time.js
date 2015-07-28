@@ -1,5 +1,6 @@
 Time = function(id, date, text) {
 	this._id = id;
+	this._commentDate = new Date(date);
 	this._date = new Date(date);
 	this._isTime = false;
 	this._spent = null;
@@ -7,6 +8,9 @@ Time = function(id, date, text) {
 	this._member = null;
 	this._memberCreator = null;
 	this._parseTimes(text);
+	
+	this._remaining = 0;
+	this._delta = 0;
 }
 
 Time.prototype.getId = function() {
@@ -17,12 +21,12 @@ Time.prototype.getCard = function() {
 	return this._card;
 }
 
-Time.prototype.getSpent = function() {
-	return this._spent;
-}
-
 Time.prototype.getEstimateDelta = function() {
 	return this._estimateDelta;
+}
+
+Time.prototype.getCommentDate = function() {
+	return this._commentDate;
 }
 
 Time.prototype.getDate = function() {
@@ -42,6 +46,26 @@ Time.prototype.setMemberCreator = function(memberCreator) {
 	if (this._member == null) {
 		this._member = memberCreator;
 	}
+}
+
+Time.prototype.getSpent = function() {
+	return this._spent;
+}
+
+Time.prototype.getRemaining = function() {
+	return this._remaining;
+}
+
+Time.prototype.setRemaining = function(remaining) {
+	this._remaining = remaining;
+}
+
+Time.prototype.getDelta = function() {
+	return this._delta;
+}
+
+Time.prototype.setDelta = function(delta) {
+	this._delta = delta;
 }
 
 Time.prototype._parseTimes = function(text) {

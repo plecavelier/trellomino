@@ -1,5 +1,5 @@
-TimeLinesChart = function(cards, getId, getName) {
-	this._cards = cards;
+TimeLinesChart = function(times, getId, getName) {
+	this._times = times;
 	this._getId = getId;
 	this._getName = getName;
 }
@@ -28,18 +28,16 @@ TimeLinesChart.prototype.render = function(containerId) {
 	// Create series
 	var series = {};
 	var thiz = this;
-	$.each(this._cards, function(index, card) {
-		$.each(card.getTimes(), function(index, time) {
-			var id = thiz._getId(card);
-			if (!(id in series)) {
-				series[id] = {};
-				series[id].name = thiz._getName(card);
-				series[id].data = $.extend(true, [], emptySerie);
-			}
-			var day = new Date(time.getDate());
-			day.setHours(0, 0, 0, 0);
-			series[id].data[position[day.getTime()]][1] += time.getSpent();
-		});
+	$.each(this._times, function(index, time) {
+		var id = thiz._getId(time);
+		if (!(id in series)) {
+			series[id] = {};
+			series[id].name = thiz._getName(time);
+			series[id].data = $.extend(true, [], emptySerie);
+		}
+		var day = new Date(time.getDate());
+		day.setHours(0, 0, 0, 0);
+		series[id].data[position[day.getTime()]][1] += time.getSpent();
 	});
 
 	$("#" + containerId).highcharts(

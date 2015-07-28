@@ -1,22 +1,22 @@
 OrganizationsBoard = function() {
 }
 
-OrganizationsBoard.prototype.charts = function(cards) {
+OrganizationsBoard.prototype.charts = function(times) {
 	return {
-		"pie" : new PieChart(cards, function(card) {
-			return card.getBoard().getId()
-		}, function(card) {
-			return card.getBoard().getName()
+		"pie" : new PieChart(times, function(time) {
+			return time.getCard().getBoard().getId()
+		}, function(time) {
+			return time.getCard().getBoard().getName()
 		}),
-		"timeline" : new TimeLinesChart(cards, function(card) {
-			return card.getBoard().getId()
-		}, function(card) {
-			return card.getBoard().getName()
+		"timeline" : new TimeLinesChart(times, function(time) {
+			return time.getCard().getBoard().getId()
+		}, function(time) {
+			return time.getCard().getBoard().getName()
 		}),
-		"timebars" : new TimeBarsChart(cards, function(card) {
-			return card.getBoard().getId()
-		}, function(card) {
-			return card.getBoard().getName()
+		"timebars" : new TimeBarsChart(times, function(time) {
+			return time.getCard().getBoard().getId()
+		}, function(time) {
+			return time.getCard().getBoard().getName()
 		})
 	}
 }

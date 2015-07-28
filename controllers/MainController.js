@@ -128,9 +128,9 @@ MainController.prototype._completeSelect = function(select, selectedValue, value
 }
 
 MainController.prototype._updateBoard = function() {
-	var cards = this._filter();
+	var times = this._filter();
 	var board = this._chooseBoard();
-	var charts = board.charts(cards);
+	var charts = board.charts(times);
 	var boardContent = board.html();
 	$("#board").html(boardContent);
 	$.each(charts, function(index, chart) {
@@ -143,17 +143,18 @@ MainController.prototype._chooseBoard = function() {
 }
 
 MainController.prototype._filter = function() {
-	var cards = [];
+	var times = [];
 	$.each(this._datas.getOrganizations(), function(index, org) {
 		$.each(org.getBoards(), function(index, board) {
 			$.each(board.getLists(), function(index, list) {
 				$.each(list.getCards(), function(index, card) {
-					if (card.getSpent() > 0 || card.getEstimate() > 0) {
-						cards.push(card);
-					}
+					card.calculate();
+					$.each(card.getTimes(), function(index, time) {
+						times.push(time);
+					});
 				});
 			});
 		});
 	});
-	return cards;
+	return times;
 }
