@@ -5,6 +5,7 @@ Datas = function() {
 
 Datas.prototype.addOrganization = function(organization) {
 	this._organizations[organization._id] = organization;
+	organization.setDatas(this);
 }
 
 Datas.prototype.getOrganization = function(idOrganization) {
@@ -33,4 +34,14 @@ Datas.prototype.getMembers = function() {
 
 Datas.prototype.memberExists = function(idMember) {
 	return idMember in this._members;
+}
+
+Datas.prototype.getMemberByName = function(name) {
+	for (idMember in this._members) {
+		var member = this._members[idMember];
+		if (member.getName() == name) {
+			return member;
+		}
+	}
+	return null;
 }

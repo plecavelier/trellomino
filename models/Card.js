@@ -2,6 +2,7 @@ Card = function(id, name) {
 	this._id = id;
 	this._name = name;
 	this._times = {};
+	this._labels = [];
 	this._board = null;
 	this._list = null;
 	this._spent = 0;
@@ -22,6 +23,10 @@ Card.prototype.getBoard = function() {
 	return this._board;
 }
 
+Card.prototype.getList = function() {
+	return this._list;
+}
+
 Card.prototype.isRecurrent = function() {
 	var regexp = new RegExp('\\[R\\]$', 'i');
 	return !!regexp.exec(this._name);
@@ -29,7 +34,19 @@ Card.prototype.isRecurrent = function() {
 
 Card.prototype.addTime = function(time) {
 	this._times[time._id] = time;
-	time._card = this;
+	time.setCard(this);
+}
+
+Card.prototype.getTimes = function() {
+	return this._times;
+}
+
+Card.prototype.addLabel = function(label) {
+	this._labels.push(label);
+}
+
+Card.prototype.getLabels = function() {
+	return this._labels;
 }
 
 Card.prototype.getTimes = function() {
@@ -97,7 +114,7 @@ Card.prototype.calculate = function() {
 			time.setDelta(0);
 		} else if (firstTimes[time.getId()]) {
 			time.setRemaining(previousRemaining + time.getEstimateDelta() - time.getSpent());
-			time.setDelta(previousRemaining - time.getRemaining() + time.getSpent());
+			time.setDelta(time.getEstimateDelta());
 		} else {
 			time.setRemaining(previousRemaining - time.getSpent() + time.getEstimateDelta());
 			time.setDelta(time.getEstimateDelta());

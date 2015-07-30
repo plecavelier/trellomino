@@ -1,7 +1,8 @@
-PieChart = function(times, getId, getName) {
+PieChart = function(times, getId, getName, getColor) {
 	this._times = times;
 	this._getId = getId;
 	this._getName = getName;
+	this._getColor = getColor;
 }
 
 PieChart.prototype.render = function(containerId) {
@@ -14,6 +15,13 @@ PieChart.prototype.render = function(containerId) {
 			data[id] = {};
 			data[id].name = thiz._getName(time);
 			data[id].y = 0;
+			
+			if (!_.isUndefined(thiz._getColor)) {
+				var color = thiz._getColor(time);
+				if (color != null) {
+					data[id].color = color;
+				}
+			}
 		}
 		data[id].y += time.getSpent();
 	});

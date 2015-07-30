@@ -66,6 +66,11 @@ DataLoader.prototype.load = function() {
 						var listData = boardData.getList(card.idList);
 						listData.addCard(cardData);
 						boardData.addCard(cardData);
+
+						$.each(card.idLabels, function(index, idLabel) {
+							var label = boardData.getLabel(idLabel);
+							cardData.addLabel(label);
+						});
 					});
 					
 					thiz._loadTimes(boardData, 0);

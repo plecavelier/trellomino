@@ -1,28 +1,28 @@
-OrganizationsBoard = function() {
+OrganizationBoard = function() {
 }
 
-OrganizationsBoard.prototype.charts = function(times) {
+OrganizationBoard.prototype.charts = function(times) {
 	return {
 		"timeline" : new TimeLinesChart(times, function(time) {
-			return time.getCard().getBoard().getOrganization().getId()
+			return time.getCard().getBoard().getId();
 		}, function(time) {
-			return time.getCard().getBoard().getOrganization().getName()
+			return time.getCard().getBoard().getName();
 		}),
 		"timebars" : new TimeBarsChart(times, function(time) {
-			return time.getCard().getBoard().getOrganization().getId()
+			return time.getCard().getBoard().getId();
 		}, function(time) {
-			return time.getCard().getBoard().getOrganization().getName()
+			return time.getCard().getBoard().getName();
 		})
 	}
 }
 
-OrganizationsBoard.prototype.html = function() {
+OrganizationBoard.prototype.html = function() {
 	return '\
 	<div class="board-row">\
 		<div class="board-col board-col-50p">\
 			<div class="board-widget">\
 				<div class="board-header">\
-					<h3>Organization timebars</h3>\
+					<h3>Board timebars</h3>\
 				</div>\
 				<div id="timeline"></div>\
 			</div>\
@@ -30,7 +30,7 @@ OrganizationsBoard.prototype.html = function() {
 		<div class="board-col board-col-50p">\
 			<div class="board-widget">\
 				<div class="board-header">\
-					<h3>Organization timelines</h3>\
+					<h3>Board timelines</h3>\
 				</div>\
 				<div id="timebars"></div>\
 			</div>\

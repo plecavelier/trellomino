@@ -5,8 +5,9 @@ Time = function(id, date, text) {
 	this._isTime = false;
 	this._spent = null;
 	this._estimateDelta = null;
-	this._member = null;
 	this._memberCreator = null;
+	this._username = null;
+	this._card = null;
 	this._parseTimes(text);
 	
 	this._remaining = 0;
@@ -19,6 +20,10 @@ Time.prototype.getId = function() {
 
 Time.prototype.getCard = function() {
 	return this._card;
+}
+
+Time.prototype.setCard = function(card) {
+	this._card = card;
 }
 
 Time.prototype.getEstimateDelta = function() {
@@ -38,14 +43,20 @@ Time.prototype.isTime = function() {
 }
 
 Time.prototype.getMember = function(member) {
-	return this._member;
+	if (this._username != null) {
+		var member = this._card.getBoard().getOrganization().getDatas().getMemberByName(this._username);
+		if (member == null) {
+			var fictiveMember = new Member(this._username, this._username, this._username);
+			this._card.getBoard().getOrganization().getDatas().addMember(fictiveMember);
+			return fictiveMember;
+		}
+		return member;
+	}
+	return this._memberCreator;
 }
 
 Time.prototype.setMemberCreator = function(memberCreator) {
 	this._memberCreator = memberCreator;
-	if (this._member == null) {
-		this._member = memberCreator;
-	}
 }
 
 Time.prototype.getSpent = function() {
@@ -77,8 +88,7 @@ Time.prototype._parseTimes = function(text) {
 		this._estimateDelta = parseFloat(match[4]);
 		
 		if (match[1]) {
-			var username = match[1].trim().substring(1);
-			this._member = new Member(username, username, username);
+			this._username = match[1].trim().substring(1);
 		}
 	}
 }

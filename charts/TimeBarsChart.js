@@ -9,21 +9,28 @@ TimeBarsChart.prototype.render = function(containerId) {
 	var categories = [];
 	var categoriesOrder = {};
 	
-	var series = [
-		{
-			name : "Delta +",
-			data : []
-		},{
-			name : "Delta -",
-			data : []
-		},{
-			name : "Remaining",
-			data : []
-		},{
-			name : "Spent",
-			data : []
-		}
-	];
+	var colors = {
+		"sky" : "#7cb5ec",
+		"marine" : "#434348",
+		"green" : "#90ed7d",
+		"orange" : "#f7a35c",
+		"blue" : "#8085e9",
+		"pink" : "#f15c80",
+		"yellow" : "#e4d354",
+		"turquoise" : "#2b908f",
+		"red" : "#f45b5b",
+		"cyan" : "#91e8e1"
+		
+	}
+	
+	var datas = {
+		"spent" : [],
+		"remaining" : [],
+		"delta" : [],
+		"delta_negative" : [],
+		"delta_positive" : [],
+		"delta_positive_spent" : []
+	}
 	
 	var remainingCards = [];
 	
@@ -34,38 +41,67 @@ TimeBarsChart.prototype.render = function(containerId) {
 			categories.push(thiz._getName(time));
 			categoriesOrder[id] = categories.length - 1;
 			
-			series[0].data.push(0);
-			series[1].data.push(0);
-			series[2].data.push(0);
-			series[3].data.push(0);
+			datas['spent'].push(0);
+			datas['remaining'].push(0);
+			datas['delta'].push(0);
+			datas['delta_negative'].push(0);
+			datas['delta_positive'].push(0);
+			datas['delta_positive_spent'].push(0);
 		}
 		
 		var order = categoriesOrder[id];
-		series[3].data[order] += time.getSpent();
+		datas['spent'][order] += time.getSpent();
 		if ($.inArray(time.getCard().getId(), remainingCards) == -1) {
 			remainingCards.push(time.getCard().getId());
-			series[2].data[order] += time.getCard().getRemaining();
+			datas['remaining'][order] += time.getCard().getRemaining();
 		}
-		series[1].data[order] += time.getDelta();
-		series[0].data[order] += time.getDelta();
+		datas['delta'][order] += time.getDelta();
 	});
 	
 	$.each(categoriesOrder, function(index, order) {
-		var delta = series[0].data[order];
-		if (delta > 0) {
-			series[1].data[order] = 0;
-		} else if (delta < 0) {
-			series[0].data[order] = 0;
-			series[2].data[order] -= delta;
+		if (datas['delta'][order] < 0) {
+			datas['delta_negative'][order] = -1 * datas['delta'][order];
+		} else if (datas['remaining'][order] >= datas['delta'][order]) {
+			datas['remaining'][order] -= datas['delta'][order];
+			datas['delta_positive'][order] = datas['delta'][order];
+		} else {
+			datas['delta_positive'][order] = datas['remaining'][order];
+			datas['delta_positive_spent'][order] = datas['delta'][order] - datas['delta_positive'][order];
+			datas['spent'][order] -= datas['delta_positive_spent'][order];
+			datas['remaining'][order] = 0;
 		}
 	});
+	
+	var series = [
+		{
+			name : "Gain",
+			data : datas['delta_negative'],
+			color : colors['green']
+		},{
+			name : "Remaining loss",
+			data : datas['delta_positive'],
+			color : colors['orange']
+		},{
+			name : "Loss",
+			data : datas['delta_positive_spent'],
+			color : colors['red']
+		},{
+			name : "Remaining",
+			data : datas['remaining'],
+			color : colors['blue']
+		},{
+			name : "Spent",
+			data : datas['spent'],
+			color : colors['marine']
+		}
+	];
 
 	$("#" + containerId).highcharts({
 		chart: {
 			type: 'bar'
 		},
 		title: {
-			text: 'Stacked bar chart'
+			text: ''
 		},
 		xAxis: {
 			categories: categories
@@ -73,8 +109,11 @@ TimeBarsChart.prototype.render = function(containerId) {
 		yAxis: {
 			min: 0,
 			title: {
-				text: 'Total fruit consumption'
+				text: 'Hours'
 			}
+		},
+		tooltip : {
+			valueSuffix : ' hours'
 		},
 		legend: {
 			reversed: true

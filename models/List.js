@@ -10,6 +10,10 @@ List.prototype.getId = function() {
 	return this._id;
 }
 
+List.prototype.getName = function() {
+	return this._name;
+}
+
 List.prototype.getCards = function() {
 	return this._cards;
 }

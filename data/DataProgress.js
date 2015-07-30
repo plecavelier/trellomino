@@ -16,7 +16,8 @@ DataProgress.prototype.removeTasks = function(tasks) {
 
 DataProgress.prototype._update = function() {
 	var percent = Math.round((this._progress / this._tasks) * 100);
-	$("#progress").find("span").html(percent);
+	$("#progress").find("#complete").attr("style", "width: " + percent + "%");
+	$("#progress").find("#percent").html(percent);
 	if (this._tasks == this._progress) {
 		this._callback(this._datas);
 	}

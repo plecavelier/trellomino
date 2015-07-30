@@ -20,6 +20,10 @@ Board.prototype.addList = function(list) {
 	list._board = this;
 }
 
+Board.prototype.getOrganization = function() {
+	return this._organization;
+}
+
 Board.prototype.getList = function(idList) {
 	return this._lists[idList];
 }
@@ -31,6 +35,10 @@ Board.prototype.getLists = function() {
 Board.prototype.addLabel = function(label) {
 	this._labels[label._id] = label;
 	label._board = this;
+}
+
+Board.prototype.getLabel = function(idLabel) {
+	return this._labels[idLabel];
 }
 
 Board.prototype.cardExists = function(idCard) {

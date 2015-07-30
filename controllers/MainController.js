@@ -96,8 +96,10 @@ MainController.prototype._updateHeader = function() {
 	orgSelect.toggle(true);
 	boardSelect.toggle(this._org != null);
 	listSelect.toggle(this._board != null);
-	memberSelect.toggle(true);
-	labelSelect.toggle(this._board != null);
+	//memberSelect.toggle(true);
+	memberSelect.toggle(false);
+	//labelSelect.toggle(this._board != null);
+	labelSelect.toggle(false);
 	
 	this._completeSelect(orgSelect, this._org, this._datas.getOrganizations(), "Organizations");
 	if (this._org != null) {
@@ -139,14 +141,32 @@ MainController.prototype._updateBoard = function() {
 }
 
 MainController.prototype._chooseBoard = function() {
-	return new OrganizationsBoard();
+	if (this._list != null) {
+		return new ListBoard();
+	} else if (this._board != null) {
+		return new BoardBoard();
+	} else if (this._org != null) {
+		return new OrganizationBoard();
+	} else {
+		return new OrganizationsBoard();
+	}
 }
 
 MainController.prototype._filter = function() {
+	var thiz = this;
 	var times = [];
 	$.each(this._datas.getOrganizations(), function(index, org) {
+		if (thiz._org != null && thiz._org.getId() != org.getId()) {
+			return;
+		}
 		$.each(org.getBoards(), function(index, board) {
+			if (thiz._board != null && thiz._board.getId() != board.getId()) {
+				return;
+			}
 			$.each(board.getLists(), function(index, list) {
+				if (thiz._list != null && thiz._list.getId() != list.getId()) {
+					return;
+				}
 				$.each(list.getCards(), function(index, card) {
 					card.calculate();
 					$.each(card.getTimes(), function(index, time) {

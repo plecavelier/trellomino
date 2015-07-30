@@ -1,0 +1,111 @@
+* {
+	font-family: "Helvetica Neue",Arial​,Helvetica,sans-serif;
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	background: rgb(237, 239, 240);
+}
+
+.page {
+}
+
+.progress {
+	width: 300px;
+	position: absolute;
+	left: 50%;
+	margin-left: -150px;
+	top: 40%;
+}
+
+.progress-bar {
+	height: 30px;
+	background: #026aa7;
+	border-radius: 3px;
+	position: relative;
+}
+
+.progress-bar-complete {
+	height: 100%;
+	background: linear-gradient(to bottom,rgba(255,255,255,.3) 0,rgba(255,255,255,.2) 100%);
+}
+
+.progress-bar-percent {
+	position: absolute;
+	left: 0;
+	top: 7px;
+	right: 0;
+	text-align: center;
+	font-size: 14px;
+	color: white;
+	font-weight: bold;
+}
+
+.progress-text {
+	margin-top: 10px;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
+	color: #4d4d4d;
+}
+
+.header {
+	overflow: auto;
+	margin: 20px;
+}
+
+.header select {
+	float: left;
+	margin-right: 10px;
+	font-size: 14px;
+	color: #4d4d4d;
+	background: white;
+	padding: 5px;
+	border: solid 1px #cccccc;
+}
+
+.board {
+}
+
+.board-row {
+	margin-bottom: 20px;
+	overflow: auto;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.board-col {
+	float: left;
+}
+
+.board-col-50p {
+	width: 50%;
+}
+
+.board-col-100p {
+	width: 100%;
+}
+
+.board-widget {
+	background: white;
+	margin-left: 10px;
+	margin-right: 10px;
+	border-bottom: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 5px;
+}
+
+.board-header {
+	margin: 5px;
+	padding: 5px;
+	padding-bottom: 15px;
+	margin-bottom: 10px;
+	border-bottom: solid 1px #ccc;
+}
+
+.board-header h3 {
+	font-size: 16px;
+	font-weight: bold;
+	color: #4d4d4d;
+}

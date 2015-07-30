@@ -8,6 +8,14 @@ Member.prototype.getId = function() {
 	return this._id;
 }
 
+Member.prototype.getName = function() {
+	return this._name;
+}
+
+Member.prototype.getFullName = function() {
+	return this._fullName;
+}
+
 Member.prototype.getSelectLabel = function() {
 	return this._fullName;
 }

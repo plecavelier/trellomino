@@ -43,20 +43,18 @@ TimeLinesChart.prototype.render = function(containerId) {
 	$("#" + containerId).highcharts(
 			{
 				title : {
-					text : 'Monthly Average Temperature',
-					x : -20
+					text : ''
 				// center
 				},
 				subtitle : {
-					text : 'Source: WorldClimate.com',
-					x : -20
+					text : ''
 				},
 				xAxis : {
 					type: 'datetime'
 				},
 				yAxis : {
 					title : {
-						text : 'Temperature (°C)'
+						text : 'Hours'
 					},
 					plotLines : [ {
 						value : 0,
@@ -65,7 +63,7 @@ TimeLinesChart.prototype.render = function(containerId) {
 					} ]
 				},
 				tooltip : {
-					valueSuffix : '°C'
+					valueSuffix : ' hours'
 				},
 				legend : {
 					layout : 'vertical',
