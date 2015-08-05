@@ -45,6 +45,10 @@ Board.prototype.cardExists = function(idCard) {
 	return idCard in this._cards;
 }
 
+Board.prototype.getCards = function() {
+	return this._cards;
+}
+
 Board.prototype.getCard = function(idCard) {
 	return this._cards[idCard];
 }

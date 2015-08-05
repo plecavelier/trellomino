@@ -79,8 +79,16 @@ body {
 	float: left;
 }
 
+.board-col-20p {
+	width: 20%;
+}
+
 .board-col-50p {
 	width: 50%;
+}
+
+.board-col-80p {
+	width: 80%;
 }
 
 .board-col-100p {

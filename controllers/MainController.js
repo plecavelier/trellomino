@@ -1,5 +1,6 @@
-MainController = function(datas) {
-	this._datas = datas;
+MainController = function(dataManager) {
+	this._dataManager = dataManager;
+	this._datas = dataManager.getDatas();
 	this._org = null;
 	this._board = null;
 	this._list = null;
@@ -132,11 +133,34 @@ MainController.prototype._completeSelect = function(select, selectedValue, value
 MainController.prototype._updateBoard = function() {
 	var times = this._filter();
 	var board = this._chooseBoard();
+	
 	var charts = board.charts(times);
-	var boardContent = board.html();
-	$("#board").html(boardContent);
-	$.each(charts, function(index, chart) {
-		chart.render(index);
+	var chartsToRender = [];
+	
+	var html = "";
+	var chartIndex = 0;
+	$.each(charts, function(index, row) {
+		html += '<div class="board-row">';
+		$.each(row, function(index, column) {
+			var style = "width" in column ? "width: " + column.width : "";
+			html += '<div class="board-col" style="' + style + '">';
+			html += '<div class="board-widget">';
+			html += '<div class="board-header">';
+			html += '<h3>' + column.name + '</h3>';
+			html += '</div>';
+			html += '<div id="chart_' + chartIndex + '"></div>';
+			html += '</div>';
+			html += '</div>';
+			chartIndex++;
+			
+			chartsToRender.push(column.chart);
+		});
+		html += '</div>';
+	});
+	$("#board").html(html);
+	
+	$.each(chartsToRender, function(index, chart) {
+		chart.render("chart_" + index);
 	});
 }
 
@@ -148,7 +172,7 @@ MainController.prototype._chooseBoard = function() {
 	} else if (this._org != null) {
 		return new OrganizationBoard();
 	} else {
-		return new OrganizationsBoard();
+		return new MainBoard();
 	}
 }
 
@@ -168,7 +192,6 @@ MainController.prototype._filter = function() {
 					return;
 				}
 				$.each(list.getCards(), function(index, card) {
-					card.calculate();
 					$.each(card.getTimes(), function(index, time) {
 						times.push(time);
 					});
@@ -176,5 +199,5 @@ MainController.prototype._filter = function() {
 			});
 		});
 	});
-	return times;
+	return this._dataManager.sortTimes(times);
 }

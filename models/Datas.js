@@ -45,3 +45,25 @@ Datas.prototype.getMemberByName = function(name) {
 	}
 	return null;
 }
+
+Datas.prototype.getAllCards = function(name) {
+	var cards = [];
+	$.each(this._organizations, function(index, org) {
+		$.each(org.getBoards(), function(index, board) {
+			$.each(board.getCards(), function(index, card) {
+				cards.push(card);
+			});
+		});
+	});
+	return cards;
+}
+
+Datas.prototype.getAllTimes = function(name) {
+	var times = [];
+	$.each(this.getAllCards(), function(index, card) {
+		$.each(card.getTimes(), function(index, time) {
+			times.push(time);
+		});
+	});
+	return times;
+}

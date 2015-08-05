@@ -1,16 +1,16 @@
-Time = function(id, date, text) {
+Time = function(id, date, commentDate, spent, estimateDelta, memberCreator, username) {
 	this._id = id;
-	this._commentDate = new Date(date);
-	this._date = new Date(date);
-	this._isTime = false;
-	this._spent = null;
-	this._estimateDelta = null;
-	this._memberCreator = null;
-	this._username = null;
-	this._card = null;
-	this._parseTimes(text);
+	this._date = date;
+	this._commentDate = commentDate;
+	this._spent = spent;
+	this._estimateDelta = estimateDelta;
+	this._memberCreator = memberCreator;
+	this._username = username;
 	
-	this._remaining = 0;
+	this._firstEstimate = null;
+	this._member = null;
+	this._card = null;
+	
 	this._delta = 0;
 }
 
@@ -38,20 +38,15 @@ Time.prototype.getDate = function() {
 	return this._date;
 }
 
-Time.prototype.isTime = function() {
-	return this._isTime;
+Time.prototype.getMember = function() {
+	return this._member;
 }
 
-Time.prototype.getMember = function(member) {
-	if (this._username != null) {
-		var member = this._card.getBoard().getOrganization().getDatas().getMemberByName(this._username);
-		if (member == null) {
-			var fictiveMember = new Member(this._username, this._username, this._username);
-			this._card.getBoard().getOrganization().getDatas().addMember(fictiveMember);
-			return fictiveMember;
-		}
-		return member;
-	}
+Time.prototype.setMember = function(member) {
+	this._member = member;
+}
+
+Time.prototype.getMemberCreator = function() {
 	return this._memberCreator;
 }
 
@@ -63,14 +58,6 @@ Time.prototype.getSpent = function() {
 	return this._spent;
 }
 
-Time.prototype.getRemaining = function() {
-	return this._remaining;
-}
-
-Time.prototype.setRemaining = function(remaining) {
-	this._remaining = remaining;
-}
-
 Time.prototype.getDelta = function() {
 	return this._delta;
 }
@@ -79,16 +66,22 @@ Time.prototype.setDelta = function(delta) {
 	this._delta = delta;
 }
 
-Time.prototype._parseTimes = function(text) {
-	var regexp = new RegExp('plus!( *@[a-zA-Z0-9]+)?( *-[0-9]+d)? *(-?[0-9]+\.?[0-9]*)/(-?[0-9]+\.?[0-9]*)', 'i');
-	var match = regexp.exec(text);
-	if (match) {
-		this._isTime = true;
-		this._spent = parseFloat(match[3]);
-		this._estimateDelta = parseFloat(match[4]);
-		
-		if (match[1]) {
-			this._username = match[1].trim().substring(1);
-		}
-	}
+Time.prototype.getFirstEstimate = function() {
+	return this._firstEstimate;
+}
+
+Time.prototype.setFirstEstimate = function(firstEstimate) {
+	this._firstEstimate = firstEstimate;
+}
+
+Time.prototype.getUsername = function() {
+	return this._username;
+}
+
+Time.prototype.getPreviousTime = function() {
+	return this._previousTime;
+}
+
+Time.prototype.setPreviousTime = function(previousTime) {
+	this._previousTime = previousTime;
 }

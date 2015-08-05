@@ -2,39 +2,33 @@ OrganizationBoard = function() {
 }
 
 OrganizationBoard.prototype.charts = function(times) {
-	return {
-		"timeline" : new TimeLinesChart(times, function(time) {
-			return time.getCard().getBoard().getId();
-		}, function(time) {
-			return time.getCard().getBoard().getName();
-		}),
-		"timebars" : new TimeBarsChart(times, function(time) {
-			return time.getCard().getBoard().getId();
-		}, function(time) {
-			return time.getCard().getBoard().getName();
+	var getBoardId = function(time) {
+		return time.getCard().getBoard().getId();
+	};
+	var getBoardName = function(time) {
+		return time.getCard().getBoard().getName();
+	};
+	return [ [ {
+		name : "Organization result",
+		width : "20%",
+		chart : new ResultColumnChart(times)
+	}, {
+		name : "Burndown chart of organization",
+		width : "80%",
+		chart : new BurndownLineChart(times)
+	} ], [ {
+		name : "Spent by board",
+		width : "50%",
+		chart : new SpentLineChart(times, {
+			getId : getBoardId,
+			getName : getBoardName
 		})
-	}
-}
-
-OrganizationBoard.prototype.html = function() {
-	return '\
-	<div class="board-row">\
-		<div class="board-col board-col-50p">\
-			<div class="board-widget">\
-				<div class="board-header">\
-					<h3>Board timebars</h3>\
-				</div>\
-				<div id="timeline"></div>\
-			</div>\
-		</div>\
-		<div class="board-col board-col-50p">\
-			<div class="board-widget">\
-				<div class="board-header">\
-					<h3>Board timelines</h3>\
-				</div>\
-				<div id="timebars"></div>\
-			</div>\
-		</div>\
-	</div>\
-	';
+	}, {
+		name : "Result by board",
+		width : "50%",
+		chart : new ResultBarChart(times, {
+			getId : getBoardId,
+			getName : getBoardName
+		})
+	} ] ]
 }
