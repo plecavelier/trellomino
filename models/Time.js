@@ -1,17 +1,15 @@
-Time = function(id, date, commentDate, spent, estimateDelta, memberCreator, username) {
+Time = function(id, date, commentDate, spent, delta, sold, memberCreator, username) {
 	this._id = id;
 	this._date = date;
 	this._commentDate = commentDate;
 	this._spent = spent;
-	this._estimateDelta = estimateDelta;
+	this._delta = delta;
+	this._sold = sold;
 	this._memberCreator = memberCreator;
 	this._username = username;
 	
-	this._firstEstimate = null;
 	this._member = null;
 	this._card = null;
-	
-	this._delta = 0;
 }
 
 Time.prototype.getId = function() {
@@ -24,10 +22,6 @@ Time.prototype.getCard = function() {
 
 Time.prototype.setCard = function(card) {
 	this._card = card;
-}
-
-Time.prototype.getEstimateDelta = function() {
-	return this._estimateDelta;
 }
 
 Time.prototype.getCommentDate = function() {
@@ -66,12 +60,12 @@ Time.prototype.setDelta = function(delta) {
 	this._delta = delta;
 }
 
-Time.prototype.getFirstEstimate = function() {
-	return this._firstEstimate;
+Time.prototype.getSold = function() {
+	return this._sold;
 }
 
-Time.prototype.setFirstEstimate = function(firstEstimate) {
-	this._firstEstimate = firstEstimate;
+Time.prototype.setSold = function(sold) {
+	this._sold = sold;
 }
 
 Time.prototype.getUsername = function() {

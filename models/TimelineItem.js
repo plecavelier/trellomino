@@ -1,6 +1,8 @@
-TimelineItem = function(date) {
+TimelineItem = function(date, previousItem) {
 	this._date = date;
 	this._values = {};
+	this._totalValues = {};
+	this._previousItem = previousItem;
 }
 
 TimelineItem.prototype.getDate = function() {
@@ -9,6 +11,16 @@ TimelineItem.prototype.getDate = function() {
 
 TimelineItem.prototype.get = function(key) {
 	return this._values[key];
+}
+
+TimelineItem.prototype.total = function(key) {
+	if (!(key in this._totalValues)) {
+		this._totalValues[key] = this._values[key];
+		if (this._previousItem != null) {
+			this._totalValues[key] += this._previousItem.total(key);
+		}
+	}
+	return this._totalValues[key];
 }
 
 TimelineItem.prototype.set = function(key, value) {

@@ -42,16 +42,16 @@ BurndownLineChart.prototype.subrender = function(containerId, timelines) {
 		},
 		series : [ {
 			"name" : "Spent",
-			"data" : timelines[0].getValues("totalSpent")
+			"data" : timelines[0].total("spent")
 		}, {
-			"name" : "First estimate",
-			"data" : timelines[0].getValues("totalFirstEstimate")
+			"name" : "Sold",
+			"data" : timelines[0].total("sold")
 		}, {
 			"name" : "Estimate",
-			"data" : timelines[0].getValues("estimate")
+			"data" : timelines[0].total("estimate")
 		}, {
 			"name" : "Remaining",
-			"data" : timelines[0].getValues("remaining")
+			"data" : timelines[0].total("remain")
 		} ]
 	});
 }

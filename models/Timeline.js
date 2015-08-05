@@ -24,10 +24,18 @@ Timeline.prototype.addItem = function(item) {
 	this._items.push(item);
 }
 
-Timeline.prototype.getValues = function(key) {
+Timeline.prototype.get = function(key) {
 	var values = [];
 	$.each(this._items, function(index, item) {
 		values.push([item.getDate().getTime(), item.get(key)]);
+	});
+	return values;
+}
+
+Timeline.prototype.total = function(key) {
+	var values = [];
+	$.each(this._items, function(index, item) {
+		values.push([item.getDate().getTime(), item.total(key)]);
 	});
 	return values;
 }

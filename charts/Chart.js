@@ -73,14 +73,12 @@ Chart.prototype._createTimeline = function(times, name, color) {
 	for (var currentDate = new Date(minDate); currentDate <= maxDate; currentDate
 			.setDate(currentDate.getDate() + 1)) {
 
-		var item = new TimelineItem(new Date(currentDate));
+		var item = new TimelineItem(new Date(currentDate), previousItem);
 
 		item.set("spent", 0);
-		item.set("totalSpent", 0);
-		item.set("firstEstimate", 0);
-		item.set("totalFirstEstimate", 0);
-		item.set("delta", 0);
-		item.set("totalDelta", 0);
+		item.set("estimate", 0);
+		item.set("sold", 0);
+		item.set("remain", 0);
 
 		while (indexTime < times.length
 				&& this._getTimeDate(times[indexTime]).getTime() == currentDate
@@ -88,29 +86,20 @@ Chart.prototype._createTimeline = function(times, name, color) {
 			var time = times[indexTime];
 
 			item.add("spent", time.getSpent());
-			item.add("totalSpent", time.getSpent());
-			item.add("firstEstimate", time.getFirstEstimate());
-			item.add("totalFirstEstimate", time.getFirstEstimate());
-			item.add("delta", time.getDelta());
-			item.add("totalDelta", time.getDelta());
+			item.add("estimate", time.getDelta());
+			if (time.getCard().getSold() != null) {
+				item.add("sold", time.getSold());
+			} else {
+				item.add("sold", time.getDelta());
+			}
 
 			indexTime++;
 		}
-
+		
+		item.set("remain", item.get("estimate") - item.get("spent"));
+		
 		timeline.addItem(item);
-
-		if (previousItem != null) {
-			item.add("totalSpent", previousItem.get("totalSpent"));
-			item.add("totalFirstEstimate", previousItem
-					.get("totalFirstEstimate"));
-			item.add("totalDelta", previousItem.get("totalDelta"));
-		}
-
-		item.set("remaining", item.get("totalFirstEstimate")
-				- item.get("totalSpent") + item.get("totalDelta"));
-		item.set("estimate", item.get("totalFirstEstimate")
-				+ item.get("totalDelta"));
-
+		
 		previousItem = item;
 	}
 

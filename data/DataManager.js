@@ -122,8 +122,8 @@ DataManager.prototype._loadTimes = function(boardData, page) {
 	
 	// Get board comments from Trello API
 	Trello.get("boards/" + boardData.getId() + "/actions", {
-		filter : "commentCard",
-		fields : "data,date",
+		filter : "commentCard,createCard",
+		fields : "data,date,type",
 		member : false,
 		memberCreator : true,
 		memberCreator_fields : "username,fullName",
@@ -133,6 +133,12 @@ DataManager.prototype._loadTimes = function(boardData, page) {
 		console.log("Get board actions " + boardData.getId() + " success");
 		$.each(result, function(index, action) {
 			if (boardData.cardExists(action.data.card.id)) {
+				var cardData = boardData.getCard(action.data.card.id);
+				
+				if (action.type == "createCard") {
+					cardData.setCreationDate(new Date(action.date));
+					return;
+				}
 				
 				// Parse Plus for Trello comment
 				var tokens = thiz._parseComment(action.data.text);
@@ -160,9 +166,8 @@ DataManager.prototype._loadTimes = function(boardData, page) {
 					}
 					
 					// Add time to card
-					var timeData = new Time(action.id, date, commentDate, tokens['left'], tokens['right'], memberData,
+					var timeData = new Time(action.id, date, commentDate, tokens['left'], tokens['right'], 0, memberData,
 							tokens['username']);
-					var cardData = boardData.getCard(action.data.card.id);
 					cardData.addTime(timeData);
 				}
 			}
@@ -198,20 +203,25 @@ DataManager.prototype._finalizeLoad = function() {
 		time.setMember(member);
 	});
 	
-	// Calculate card estimate and delta for each times
+	// Set estimate sold
 	$.each(this._datas.getAllCards(), function(index, card) {
 		
+		var sold = thiz._parseSold(card.getName());
+		
 		// Set card estimate
-		var sortedTimesByDate = thiz.sortTimes(card.getTimes());
-		$.each(sortedTimesByDate, function(index, time) {
-			if (index == 0) {
-				time.getCard().setEstimate(time.getEstimateDelta());
-				time.setFirstEstimate(time.getEstimateDelta());
-				time.setDelta(0);
+		if (sold) {
+			var sortedTimesByDate = thiz.sortTimes(card.getTimes());
+			var id = "sold_" + card.getId();
+			var date = new Date(card.getCreationDate());
+			var soldTime = null;
+			if (sortedTimesByDate.length == 0) {
+				soldTime = new Time(id, date, date, 0, sold, sold, null, null);
 			} else {
-				time.setDelta(time.getEstimateDelta());
+				soldTime = new Time(id, date, date, 0, 0, sold, null, null);
 			}
-		});
+			card.addTime(soldTime);
+			card.setSold(sold);
+		}
 	});
 }
 
@@ -243,6 +253,15 @@ DataManager.prototype._parseComment = function(comment) {
 			tokens['right'] = parseFloat(match[5]);
 		}
 		return tokens;
+	}
+	return false;
+}
+
+DataManager.prototype._parseSold = function(cardName) {
+	var regexp = new RegExp('#([0-9]+)h', 'i');
+	var match = regexp.exec(cardName);
+	if (match) {
+		return parseInt(match[1]);
 	}
 	return false;
 }

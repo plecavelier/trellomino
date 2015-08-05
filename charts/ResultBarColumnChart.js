@@ -15,42 +15,42 @@ ResultBarColumnChart.prototype.subrender = function(containerId, timelines) {
 	var categories = [];
 	var datas = {
 		"spent" : [],
-		"remaining" : [],
-		"gain" : [],
-		"remainingLoss" : [],
+		"remain" : [],
+		"estimGain" : [],
+		"estimLoss" : [],
 		"loss" : []
 	}
 	$.each(timelines, function(index, timeline) {
 		categories.push(timeline.getName());
 
 		datas['spent'].push(timeline.sum("spent"));
-		datas['remaining'].push(timeline.last("remaining"));
-		datas['gain'].push(0);
-		datas['remainingLoss'].push(0);
+		datas['remain'].push(timeline.sum("remain"));
+		datas['estimGain'].push(0);
+		datas['estimLoss'].push(0);
 		datas['loss'].push(0);
 
-		var delta = timeline.sum("delta");
+		var delta = timeline.sum("estimate") - timeline.sum("sold");
 
 		if (delta < 0) {
-			datas['gain'][index] = -1 * delta;
-		} else if (datas['remaining'][index] >= delta) {
-			datas['remaining'][index] -= delta;
-			datas['remainingLoss'][index] = delta;
+			datas['estimGain'][index] = -1 * delta;
+		} else if (datas['remain'][index] >= delta) {
+			datas['remain'][index] -= delta;
+			datas['estimLoss'][index] = delta;
 		} else {
-			datas['remainingLoss'][index] = datas['remaining'][index];
-			datas['loss'][index] = delta - datas['remainingLoss'][index];
+			datas['estimLoss'][index] = datas['remain'][index];
+			datas['loss'][index] = delta - datas['estimLoss'][index];
 			datas['spent'][index] -= datas['loss'][index];
-			datas['remaining'][index] = 0;
+			datas['remain'][index] = 0;
 		}
 	});
 
 	var series = [ {
 		name : "Gain",
-		data : datas['gain'],
+		data : datas['estimGain'],
 		color : this.colors['green']
 	}, {
 		name : "Remaining loss",
-		data : datas['remainingLoss'],
+		data : datas['estimLoss'],
 		color : this.colors['orange']
 	}, {
 		name : "Loss",
@@ -58,7 +58,7 @@ ResultBarColumnChart.prototype.subrender = function(containerId, timelines) {
 		color : this.colors['red']
 	}, {
 		name : "Remaining",
-		data : datas['remaining'],
+		data : datas['remain'],
 		color : this.colors['blue']
 	}, {
 		name : "Spent",

@@ -18,7 +18,7 @@ SpentLineChart.prototype.subrender = function(containerId, timelines) {
 		if (color != null) {
 			serieData.color = color;
 		}
-		serieData.data = timeline.getValues("spent");
+		serieData.data = timeline.get("spent");
 		data.push(serieData);
 	});
 

@@ -5,7 +5,8 @@ Card = function(id, name) {
 	this._labels = [];
 	this._board = null;
 	this._list = null;
-	this._estimate = 0;
+	this._creationDate = null;
+	this._sold = null;
 }
 
 Card.prototype.getId = function() {
@@ -41,34 +42,18 @@ Card.prototype.getLabels = function() {
 	return this._labels;
 }
 
-Card.prototype.getSpent = function() {
-	return this._spent;
+Card.prototype.getCreationDate = function() {
+	return this._creationDate;
 }
 
-Card.prototype.setSpent = function(spent) {
-	this._spent = spent
+Card.prototype.setCreationDate = function(creationDate) {
+	this._creationDate = creationDate;
 }
 
-Card.prototype.getDelta = function() {
-	return this._delta;
+Card.prototype.getSold = function() {
+	return this._sold;
 }
 
-Card.prototype.setDelta = function(delta) {
-	this._delta = delta
-}
-
-Card.prototype.getEstimate = function() {
-	return this._estimate;
-}
-
-Card.prototype.setEstimate = function(estimate) {
-	this._estimate = estimate;
-}
-
-Card.prototype.getRemaining = function() {
-	return this._remaining;
-}
-
-Card.prototype.setRemaining = function(remaining) {
-	this._remaining = remaining;
+Card.prototype.setSold = function(sold) {
+	this._sold = sold;
 }
