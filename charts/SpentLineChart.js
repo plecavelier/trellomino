@@ -34,17 +34,20 @@ SpentLineChart.prototype.subrender = function(containerId, timelines) {
 			type : 'datetime'
 		},
 		yAxis : {
+			min : 0,
 			title : {
 				text : 'Hours'
-			},
-			plotLines : [ {
-				value : 0,
-				width : 1,
-				color : '#808080'
-			} ]
+			}
 		},
 		tooltip : {
 			valueSuffix : ' hours'
+		},
+		plotOptions : {
+			line : {
+				marker : {
+					radius : 3
+				}
+			}
 		},
 		legend : {
 			layout : 'vertical',

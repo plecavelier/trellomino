@@ -24,15 +24,18 @@ BurndownLineChart.prototype.subrender = function(containerId, timelines) {
 		yAxis : {
 			title : {
 				text : 'Hours'
-			},
-			plotLines : [ {
-				value : 0,
-				width : 1,
-				color : '#808080'
-			} ]
+			}
+		},
+		plotOptions : {
+			line : {
+				marker : {
+					enabled : false
+				}
+			}
 		},
 		tooltip : {
-			valueSuffix : ' hours'
+			shared : true,
+			crosshairs : true
 		},
 		legend : {
 			layout : 'vertical',
@@ -41,17 +44,21 @@ BurndownLineChart.prototype.subrender = function(containerId, timelines) {
 			borderWidth : 0
 		},
 		series : [ {
-			"name" : "Spent",
-			"data" : timelines[0].total("spent")
-		}, {
 			"name" : "Sold",
-			"data" : timelines[0].total("sold")
+			"data" : timelines[0].total("sold"),
+			"color" : this.colors['marine']
 		}, {
 			"name" : "Estimate",
-			"data" : timelines[0].total("estimate")
+			"data" : timelines[0].total("estimate"),
+			"color" : this.colors['orange']
 		}, {
-			"name" : "Remaining",
-			"data" : timelines[0].total("remain")
+			"name" : "Remain",
+			"data" : timelines[0].total("remain"),
+			"color" : this.colors['green']
+		}, {
+			"name" : "Spent",
+			"data" : timelines[0].total("spent"),
+			"color" : this.colors['blue']
 		} ]
 	});
 }

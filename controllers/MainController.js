@@ -15,6 +15,7 @@ MainController.prototype.start = function() {
 	
 	$("#progress").hide();
 	$("#page").show();
+	this._showColors();
 	this._update();
 }
 
@@ -96,7 +97,8 @@ MainController.prototype._updateHeader = function() {
 		
 	orgSelect.toggle(true);
 	boardSelect.toggle(this._org != null);
-	listSelect.toggle(this._board != null);
+	//listSelect.toggle(this._board != null);
+	listSelect.toggle(false);
 	//memberSelect.toggle(true);
 	memberSelect.toggle(false);
 	//labelSelect.toggle(this._board != null);
@@ -200,4 +202,17 @@ MainController.prototype._filter = function() {
 		});
 	});
 	return this._dataManager.sortTimes(times);
+}
+
+MainController.prototype._showColors = function() {
+	var html = "<div>";
+	$.each((new Chart()).colors, function(index, color) {
+		html += '<div title="' + index + '" class="color" style="background: ' + color + '" />';
+	});
+	html += "</div><div>";
+	$.each((new Chart()).trelloColors, function(index, color) {
+		html += '<div title="' + index + '" class="color" style="background: ' + color + '" />';
+	});
+	html += "</div>";
+	$("#colors").html(html);
 }

@@ -38,7 +38,7 @@ BoardBoard.prototype.charts = function(times) {
 		name : "Burndown chart of board",
 		width : "80%",
 		chart : new BurndownLineChart(times)
-	} ], [ {
+	} ],/* [ {
 		name : "Spent by list",
 		width : "50%",
 		chart : new SpentLineChart(times, {
@@ -52,7 +52,7 @@ BoardBoard.prototype.charts = function(times) {
 			getId : getListId,
 			getName : getListName
 		})
-	} ], [ {
+	} ],*/ [ {
 		name : "Labels distribution",
 		width : "50%",
 		chart : new SpentPieChart(times, {

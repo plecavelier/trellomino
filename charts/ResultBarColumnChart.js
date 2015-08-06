@@ -45,24 +45,24 @@ ResultBarColumnChart.prototype.subrender = function(containerId, timelines) {
 	});
 
 	var series = [ {
-		name : "Gain",
-		data : datas['estimGain'],
+		name : "Estim. gain",
+		data : this.round(datas['estimGain']),
 		color : this.colors['green']
 	}, {
-		name : "Remaining loss",
-		data : datas['estimLoss'],
+		name : "Estim. loss",
+		data : this.round(datas['estimLoss']),
 		color : this.colors['orange']
 	}, {
 		name : "Loss",
-		data : datas['loss'],
+		data : this.round(datas['loss']),
 		color : this.colors['red']
 	}, {
-		name : "Remaining",
-		data : datas['remain'],
+		name : "Remain",
+		data : this.round(datas['remain']),
 		color : this.colors['blue']
 	}, {
 		name : "Spent",
-		data : datas['spent'],
+		data : this.round(datas['spent']),
 		color : this.colors['marine']
 	} ];
 
@@ -80,6 +80,22 @@ ResultBarColumnChart.prototype.subrender = function(containerId, timelines) {
 			min : 0,
 			title : {
 				text : 'Hours'
+			},
+			stackLabels : {
+				enabled : true,
+				style: {
+					fontWeight: 'bold',
+					color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+				},
+				formatter : function() {
+					var spent = this.points['4,' + this.x][1] - this.points['4,' + this.x][0];
+					var remain = this.points['3,' + this.x][1] - this.points['3,' + this.x][0];
+					var loss = this.points['2,' + this.x][1] - this.points['2,' + this.x][0];
+					var estimLoss = this.points['1,' + this.x][1] - this.points['1,' + this.x][0];
+					var total = spent + remain + loss + estimLoss;
+					var percent = Math.floor((spent + loss) / total * 100);
+					return percent + "%";
+				}
 			}
 		},
 		tooltip : {

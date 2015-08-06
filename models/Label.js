@@ -18,6 +18,8 @@ Label.prototype.getSelectLabel = function() {
 }
 
 Label.prototype.getRealColor = function() {
+	
+	// TODO : to remove
 	var colors = {
 		"green" : "#61bd4f",
 		"yellow" : "#f2d600",

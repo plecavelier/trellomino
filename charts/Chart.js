@@ -1,19 +1,40 @@
+Highcharts.setOptions({
+	global : {
+		useUTC : false
+	}
+});
+
 Chart = function(times, settings) {
 	this._times = times;
 	this._settings = settings;
 }
 
+// TODO : to transfer in config
+
 Chart.prototype.colors = {
+	"blue" : "#8085e9",
 	"sky" : "#7cb5ec",
 	"marine" : "#434348",
 	"green" : "#90ed7d",
-	"orange" : "#f7a35c",
-	"blue" : "#8085e9",
-	"pink" : "#f15c80",
 	"yellow" : "#e4d354",
-	"turquoise" : "#2b908f",
+	"orange" : "#f7a35c",
+	"pink" : "#f15c80",
 	"red" : "#f45b5b",
+	"turquoise" : "#2b908f",
 	"cyan" : "#91e8e1"
+}
+
+Chart.prototype.trelloColors = {
+	"blue" : "#0079bf",
+	"sky" : "#00c2e0",
+	"black" : "#4d4d4d",
+	"green" : "#61bd4f",
+	"yellow" : "#f2d600",
+	"orange" : "#ffab4a",
+	"pink" : "#ff80ce",
+	"red" : "#eb5a46",
+	"purple" : "#c377e0",
+	"lime" : "#51e898"
 }
 
 Chart.prototype.render = function(containerId) {
@@ -46,7 +67,7 @@ Chart.prototype.render = function(containerId) {
 		});
 
 	} else {
-		var timeline = this._createTimeline(this._times, null, null);
+		var timeline = this._createTimeline(this._times, "Result", null);
 		timelines.push(timeline);
 	}
 
@@ -104,6 +125,17 @@ Chart.prototype._createTimeline = function(times, name, color) {
 	}
 
 	return timeline;
+}
+
+Chart.prototype.round = function(value) {
+	if (value instanceof Object || $.isArray(value)) {
+		$.each(value, function(index, item) {
+			value[index] = Math.round(item * 100) / 100;
+		});
+	} else {
+		value = Math.round(value * 100) / 100;
+	}
+	return value;
 }
 
 Chart.prototype._getTimeDate = function(time) {
