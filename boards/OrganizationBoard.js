@@ -8,6 +8,9 @@ OrganizationBoard.prototype.charts = function(times) {
 	var getBoardName = function(time) {
 		return time.getCard().getBoard().getName();
 	};
+	var getBoardColor = function(time) {
+		return time.getCard().getBoard().getColor();
+	};
 	return [ [ {
 		name : "Organization result",
 		width : "20%",
@@ -21,7 +24,8 @@ OrganizationBoard.prototype.charts = function(times) {
 		width : "50%",
 		chart : new SpentLineChart(times, {
 			getId : getBoardId,
-			getName : getBoardName
+			getName : getBoardName,
+			getColor : getBoardColor
 		})
 	}, {
 		name : "Result by board",

@@ -12,29 +12,26 @@ Chart = function(times, settings) {
 // TODO : to transfer in config
 
 Chart.prototype.colors = {
-	"blue" : "#8085e9",
-	"sky" : "#7cb5ec",
+	"black" : "#4d4d4d",
 	"marine" : "#434348",
-	"green" : "#90ed7d",
+	"blue" : "#787DDB",
+	"sky" : "#7cb5ec",
+	"cyan" : "#91e8e1",
+	"turquoise" : "#2b908f",
+	"green" : "#3DD383",
+	"lime" : "#90ed7d",
 	"yellow" : "#e4d354",
 	"orange" : "#f7a35c",
-	"pink" : "#f15c80",
+	"pink" : "#FF89A7",
 	"red" : "#f45b5b",
-	"turquoise" : "#2b908f",
-	"cyan" : "#91e8e1"
+	"purple" : "#BE94D1"
 }
 
-Chart.prototype.trelloColors = {
-	"blue" : "#0079bf",
-	"sky" : "#00c2e0",
-	"black" : "#4d4d4d",
-	"green" : "#61bd4f",
-	"yellow" : "#f2d600",
-	"orange" : "#ffab4a",
-	"pink" : "#ff80ce",
-	"red" : "#eb5a46",
-	"purple" : "#c377e0",
-	"lime" : "#51e898"
+Chart.prototype.color = function(color) {
+	if (color in this.colors) {
+		return this.colors[color];
+	}
+	return this.colors['blue'];
 }
 
 Chart.prototype.render = function(containerId) {

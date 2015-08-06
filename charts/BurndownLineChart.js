@@ -46,19 +46,19 @@ BurndownLineChart.prototype.subrender = function(containerId, timelines) {
 		series : [ {
 			"name" : "Sold",
 			"data" : timelines[0].total("sold"),
-			"color" : this.colors['marine']
+			"color" : this.color("marine")
 		}, {
 			"name" : "Estimate",
 			"data" : timelines[0].total("estimate"),
-			"color" : this.colors['orange']
+			"color" : this.color("orange")
 		}, {
 			"name" : "Remain",
 			"data" : timelines[0].total("remain"),
-			"color" : this.colors['green']
+			"color" : this.color("lime")
 		}, {
 			"name" : "Spent",
 			"data" : timelines[0].total("spent"),
-			"color" : this.colors['blue']
+			"color" : this.color("blue")
 		} ]
 	});
 }

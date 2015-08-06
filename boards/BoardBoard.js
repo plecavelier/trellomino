@@ -27,7 +27,7 @@ BoardBoard.prototype.charts = function(times) {
 		if (time.getCard().getLabels().length == 0) {
 			return null;
 		} else {
-			return time.getCard().getLabels()[0].getRealColor();
+			return time.getCard().getLabels()[0].getColor();
 		}
 	};
 	return [ [ {

@@ -9,6 +9,8 @@ SpentPieChart.prototype.isTimeline = false;
 SpentPieChart.prototype.hasSeries = true;
 
 SpentPieChart.prototype.subrender = function(containerId, timelines) {
+	
+	var thiz = this;
 
 	var data = [];
 	$.each(timelines, function(index, timeline) {
@@ -16,7 +18,7 @@ SpentPieChart.prototype.subrender = function(containerId, timelines) {
 		serieData.name = timeline.getName();
 		var color = timeline.getColor();
 		if (color != null) {
-			serieData.color = color;
+			serieData.color = thiz.color(color);
 		}
 		serieData.y = timeline.sum("spent");
 		data.push(serieData);

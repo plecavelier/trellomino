@@ -9,6 +9,8 @@ SpentLineChart.prototype.isTimeline = true;
 SpentLineChart.prototype.hasSeries = true;
 
 SpentLineChart.prototype.subrender = function(containerId, timelines) {
+	
+	var thiz = this;
 
 	var data = [];
 	$.each(timelines, function(index, timeline) {
@@ -16,7 +18,7 @@ SpentLineChart.prototype.subrender = function(containerId, timelines) {
 		serieData.name = timeline.getName();
 		var color = timeline.getColor();
 		if (color != null) {
-			serieData.color = color;
+			serieData.color = thiz.color(color);
 		}
 		serieData.data = timeline.get("spent");
 		data.push(serieData);

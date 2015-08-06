@@ -51,7 +51,7 @@ DataManager.prototype.load = function(callback) {
 			
 			// Get lists, labels and cards of board from Trello API
 			Trello.get("boards/" + board.id, {
-				"fields" : "name,idOrganization",
+				"fields" : "name,idOrganization,prefs",
 				"lists" : "all",
 				"list_fields" : "name,pos",
 				"labels" : "all",
@@ -68,7 +68,7 @@ DataManager.prototype.load = function(callback) {
 					var organizationData = thiz._datas.getOrganization(idOrganization);
 					
 					// Add board to organization
-					var boardData = new Board(result.id, result.name);
+					var boardData = new Board(result.id, result.name, result.prefs.background);
 					organizationData.addBoard(boardData);
 					
 					$.each(result.lists, function(index, list) {

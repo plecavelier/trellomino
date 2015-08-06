@@ -47,23 +47,23 @@ ResultBarColumnChart.prototype.subrender = function(containerId, timelines) {
 	var series = [ {
 		name : "Estim. gain",
 		data : this.round(datas['estimGain']),
-		color : this.colors['green']
+		color : this.color("lime")
 	}, {
 		name : "Estim. loss",
 		data : this.round(datas['estimLoss']),
-		color : this.colors['orange']
+		color : this.color("orange")
 	}, {
 		name : "Loss",
 		data : this.round(datas['loss']),
-		color : this.colors['red']
+		color : this.color("red")
 	}, {
 		name : "Remain",
 		data : this.round(datas['remain']),
-		color : this.colors['blue']
+		color : this.color("blue")
 	}, {
 		name : "Spent",
 		data : this.round(datas['spent']),
-		color : this.colors['marine']
+		color : this.color("marine")
 	} ];
 
 	$("#" + containerId).highcharts({

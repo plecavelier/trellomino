@@ -15,7 +15,6 @@ MainController.prototype.start = function() {
 	
 	$("#progress").hide();
 	$("#page").show();
-	this._showColors();
 	this._update();
 }
 
@@ -202,17 +201,4 @@ MainController.prototype._filter = function() {
 		});
 	});
 	return this._dataManager.sortTimes(times);
-}
-
-MainController.prototype._showColors = function() {
-	var html = "<div>";
-	$.each((new Chart()).colors, function(index, color) {
-		html += '<div title="' + index + '" class="color" style="background: ' + color + '" />';
-	});
-	html += "</div><div>";
-	$.each((new Chart()).trelloColors, function(index, color) {
-		html += '<div title="' + index + '" class="color" style="background: ' + color + '" />';
-	});
-	html += "</div>";
-	$("#colors").html(html);
 }

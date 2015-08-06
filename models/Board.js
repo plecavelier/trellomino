@@ -1,6 +1,7 @@
-Board = function(id, name) {
+Board = function(id, name, color) {
 	this._id = id;
 	this._name = name;
+	this._color = color;
 	this._lists = {};
 	this._labels = {};
 	this._cards = {};
@@ -68,4 +69,8 @@ Board.prototype.getLabel = function(idLabel) {
 
 Board.prototype.getSelectLabel = function() {
 	return this._name;
+}
+
+Board.prototype.getColor = function() {
+	return this._color;
 }
