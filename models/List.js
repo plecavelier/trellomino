@@ -23,6 +23,6 @@ List.prototype.addCard = function(card) {
 	card._list = this;
 }
 
-List.prototype.getSelectLabel = function() {
+List.prototype.getDisplayedLabel = function() {
 	return this._name;
 }

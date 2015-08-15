@@ -16,6 +16,6 @@ Member.prototype.getFullName = function() {
 	return this._fullName;
 }
 
-Member.prototype.getSelectLabel = function() {
+Member.prototype.getDisplayedLabel = function() {
 	return this._fullName;
 }

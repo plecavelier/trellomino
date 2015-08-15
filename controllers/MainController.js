@@ -10,9 +10,9 @@ MainController = function(dataManager) {
 
 MainController.prototype.start = function() {
 	console.log("Start controller");
-	
+
 	this._initHeader();
-	
+
 	$("#progress").hide();
 	$("#page").show();
 	this._update();
@@ -20,124 +20,124 @@ MainController.prototype.start = function() {
 
 MainController.prototype._update = function() {
 	this._updateHeader();
+	this._updateTitle();
 	this._updateBoard();
 }
 
 MainController.prototype._initHeader = function() {
-	
-	var orgSelect = $("#orgSelect");
-	var boardSelect = $("#boardSelect");
-	var listSelect = $("#listSelect");
-	var memberSelect = $("#memberSelect");
-	var labelSelect = $("#labelSelect");
-	
-	var thiz = this;
-	
-	orgSelect.change(function() {
-		thiz._org = null;
-		thiz._board = null;
-		thiz._list = null;
-		thiz._member = null;
-		thiz._label = null;
-		var value = $(this).val();
-		if (value != "") {
-			thiz._org = thiz._datas.getOrganization(value);
-		}
-		thiz._update();
+	$("body").click(function() {
+		$(".menu .popover").fadeOut(300);
 	});
-
-	boardSelect.change(function() {
-		thiz._board = null;
-		thiz._list = null;
-		thiz._member = null;
-		thiz._label = null;
-		var value = $(this).val();
-		if (value != "") {
-			thiz._board = thiz._org.getBoard(value);
-		}
-		thiz._update();
-	});
-
-	listSelect.change(function() {
-		thiz._list = null;
-		var value = $(this).val();
-		if (value != "") {
-			thiz._list = thiz._board.getList(value);
-		}
-		thiz._update();
-	});
-
-	memberSelect.change(function() {
-		thiz._member = null;
-		var value = $(this).val();
-		if (value != "") {
-			thiz._member = thiz._datas.getMember(value);
-		}
-		thiz._update();
-	});
-
-	labelSelect.change(function() {
-		thiz._label = null;
-		var value = $(this).val();
-		if (value != "") {
-			thiz._label = thiz._board.getLabel(value);
-		}
-		thiz._update();
+	$(".menu").each(function(index, menu) {
+		$(menu).find("> a").click(function(e) {
+			e.stopPropagation();
+			$(".menu .popover").fadeOut(300);
+			$(menu).find(".popover").fadeIn(300, function() {
+				$(this).focus();
+			});
+		});
+		$(menu).find(".popover").click(function(e) {
+			e.stopPropagation();
+		});
 	});
 }
 
 MainController.prototype._updateHeader = function() {
-	
-	var orgSelect = $("#orgSelect");
-	var boardSelect = $("#boardSelect");
-	var listSelect = $("#listSelect");
-	var memberSelect = $("#memberSelect");
-	var labelSelect = $("#labelSelect");
-		
-	orgSelect.toggle(true);
-	boardSelect.toggle(this._org != null);
-	//listSelect.toggle(this._board != null);
-	listSelect.toggle(false);
-	//memberSelect.toggle(true);
-	memberSelect.toggle(false);
-	//labelSelect.toggle(this._board != null);
-	labelSelect.toggle(false);
-	
-	this._completeSelect(orgSelect, this._org, this._datas.getOrganizations(), "Organizations");
+
+	var orgMenu = $("#orgMenu");
+	var boardMenu = $("#boardMenu");
+	var listMenu = $("#listMenu");
+	var memberMenu = $("#memberMenu");
+	var labelMenu = $("#labelMenu");
+
+	orgMenu.toggle(true);
+	boardMenu.toggle(this._org != null);
+	// listSelect.toggle(this._board != null);
+	listMenu.toggle(false);
+	// memberSelect.toggle(true);
+	memberMenu.toggle(false);
+	// labelSelect.toggle(this._board != null);
+	labelMenu.toggle(false);
+
+	this._completeMenu(orgMenu, "org", this._datas.getOrganizations());
 	if (this._org != null) {
-		this._completeSelect(boardSelect, this._board, this._org.getBoards(), "Boards");
+		this._completeMenu(boardMenu, "board", this._org.getBoards());
 	}
 	if (this._board != null) {
-		this._completeSelect(listSelect, this._list, this._board.getLists(), "Lists");
+		this._completeMenu(listMenu, "list", this._board.getLists());
 	}
-	
-	this._completeSelect(memberSelect, this._member, this._datas.getMembers(), "Members");
+
+	this._completeMenu(memberMenu, "member", this._datas.getMembers());
 	if (this._board != null) {
-		this._completeSelect(labelSelect, this._label, this._board.getLabels(), "Labels");
+		this._completeMenu(labelMenu, "label", this._board.getLabels());
 	}
 }
 
-MainController.prototype._completeSelect = function(select, selectedValue, values, noneLabel) {
-	console.log("Complete select");
-	var html = '<option value="">' + noneLabel + '</option>';
+MainController.prototype._completeMenu = function(menu, type, values) {
+	var thiz = this;
+	menu.find(".dropdown-menu").empty();
+	var html = '';
 	$.each(values, function(index, value) {
-		html += '<option value="' + value.getId() + '">' + value.getSelectLabel() + '</option>';
+		html = '<li><a href="#">' + value.getDisplayedLabel() + '</a></li>';
+		var li = $(html);
+		li.find("a").on("click", function(e) {
+			switch (type) {
+			case "org":
+				thiz._org = value;
+				thiz._board = null;
+				thiz._list = null;
+				thiz._member = null;
+				thiz._label = null;
+				break;
+
+			case "board":
+				thiz._board = value;
+				thiz._list = null;
+				thiz._member = null;
+				thiz._label = null;
+				break;
+
+			case "list":
+				thiz._list = value;
+				// TODO
+				break;
+
+			case "member":
+				thiz._member = value;
+				// TODO
+				break;
+
+			case "label":
+				thiz._label = value;
+				// TODO
+				break;
+			}
+			thiz._update();
+		});
+		menu.find(".dropdown-menu").append(li);
 	});
-	select.html(html);
-	if (selectedValue == null) {
-		select.val("");
+}
+
+MainController.prototype._updateTitle = function() {
+	if (this._board != null) {
+		$("#title .glyphicon").attr("class", "glyphicon glyphicon-th");
+		$("#title h1").html("Board " + this._board.getDisplayedLabel());
+	} else if (this._org != null) {
+		$("#title .glyphicon").attr("class", "glyphicon glyphicon-home");
+		$("#title h1").html("Organization " + this._org.getDisplayedLabel());
 	} else {
-		select.val(selectedValue.getId());
+		$("#title .glyphicon").attr("class", "glyphicon glyphicon-home");
+		$("#title h1").html("Organizations");
 	}
 }
 
 MainController.prototype._updateBoard = function() {
 	var times = this._filter();
 	var board = this._chooseBoard();
-	
+
 	var charts = board.charts(times);
 	var chartsToRender = [];
-	
+
 	var html = "";
 	var chartIndex = 0;
 	$.each(charts, function(index, row) {
@@ -149,17 +149,18 @@ MainController.prototype._updateBoard = function() {
 			html += '<div class="board-header">';
 			html += '<h3>' + column.name + '</h3>';
 			html += '</div>';
-			html += '<div id="chart_' + chartIndex + '"></div>';
+			html += '<div class="board-chart" id="chart_' + chartIndex
+				+ '"></div>';
 			html += '</div>';
 			html += '</div>';
 			chartIndex++;
-			
+
 			chartsToRender.push(column.chart);
 		});
 		html += '</div>';
 	});
 	$("#board").html(html);
-	
+
 	$.each(chartsToRender, function(index, chart) {
 		chart.render("chart_" + index);
 	});

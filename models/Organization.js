@@ -38,6 +38,6 @@ Organization.prototype.getBoard = function(idBoard) {
 	return this._boards[idBoard];
 }
 
-Organization.prototype.getSelectLabel = function() {
+Organization.prototype.getDisplayedLabel = function() {
 	return this._name;
 }

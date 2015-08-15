@@ -13,7 +13,7 @@ Label.prototype.getName = function() {
 	return this._name;
 }
 
-Label.prototype.getSelectLabel = function() {
+Label.prototype.getDisplayedLabel = function() {
 	return this._name;
 }
 

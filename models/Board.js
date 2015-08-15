@@ -67,7 +67,7 @@ Board.prototype.getLabel = function(idLabel) {
 	return this._labels[idLabel];
 }
 
-Board.prototype.getSelectLabel = function() {
+Board.prototype.getDisplayedLabel = function() {
 	return this._name;
 }
 
