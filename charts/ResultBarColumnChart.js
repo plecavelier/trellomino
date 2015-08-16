@@ -1,5 +1,5 @@
-ResultBarColumnChart = function(times, settings) {
-	Chart.call(this, times, settings);
+ResultBarColumnChart = function(times, settings, workUnit) {
+	Chart.call(this, times, settings, workUnit);
 }
 
 ResultBarColumnChart.prototype = new Chart();
@@ -79,7 +79,7 @@ ResultBarColumnChart.prototype.subrender = function(containerId, timelines) {
 		yAxis : {
 			min : 0,
 			title : {
-				text : 'Hours'
+				text : this.getworkUnitText()
 			},
 			stackLabels : {
 				enabled : true,
@@ -99,7 +99,7 @@ ResultBarColumnChart.prototype.subrender = function(containerId, timelines) {
 			}
 		},
 		tooltip : {
-			valueSuffix : ' hours'
+			valueSuffix : this.getworkUnitSuffix()
 		},
 		legend : {
 			reversed : true

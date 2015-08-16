@@ -1,7 +1,7 @@
 OrganizationBoard = function() {
 }
 
-OrganizationBoard.prototype.charts = function(times) {
+OrganizationBoard.prototype.charts = function(times, workUnit) {
 	var getBoardId = function(time) {
 		return time.getCard().getBoard().getId();
 	};
@@ -14,11 +14,11 @@ OrganizationBoard.prototype.charts = function(times) {
 	return [ [ {
 		name : "Organization result",
 		width : "20%",
-		chart : new ResultColumnChart(times)
+		chart : new ResultColumnChart(times, {}, workUnit)
 	}, {
 		name : "Burndown chart of organization",
 		width : "80%",
-		chart : new BurndownLineChart(times)
+		chart : new BurndownLineChart(times, {}, workUnit)
 	} ], [ {
 		name : "Spent by board",
 		width : "50%",
@@ -26,13 +26,13 @@ OrganizationBoard.prototype.charts = function(times) {
 			getId : getBoardId,
 			getName : getBoardName,
 			getColor : getBoardColor
-		})
+		}, workUnit)
 	}, {
 		name : "Result by board",
 		width : "50%",
 		chart : new ResultBarChart(times, {
 			getId : getBoardId,
 			getName : getBoardName
-		})
+		}, workUnit)
 	} ] ]
 }

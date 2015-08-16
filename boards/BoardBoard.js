@@ -1,7 +1,7 @@
 BoardBoard = function() {
 }
 
-BoardBoard.prototype.charts = function(times) {
+BoardBoard.prototype.charts = function(times, workUnit) {
 
 	var getListId = function(time) {
 		return time.getCard().getList().getId();
@@ -18,7 +18,7 @@ BoardBoard.prototype.charts = function(times) {
 	};
 	var getLabelName = function(time) {
 		if (time.getCard().getLabels().length == 0) {
-			return null;
+			return "No label";
 		} else {
 			return time.getCard().getLabels()[0].getName();
 		}
@@ -33,11 +33,11 @@ BoardBoard.prototype.charts = function(times) {
 	return [ [ {
 		name : "Board result",
 		width : "20%",
-		chart : new ResultColumnChart(times)
+		chart : new ResultColumnChart(times, {}, workUnit)
 	}, {
 		name : "Burndown chart of board",
 		width : "80%",
-		chart : new BurndownLineChart(times)
+		chart : new BurndownLineChart(times, {}, workUnit)
 	} ],/* [ {
 		name : "Spent by list",
 		width : "50%",
@@ -59,7 +59,7 @@ BoardBoard.prototype.charts = function(times) {
 			getId : getLabelId,
 			getName : getLabelName,
 			getColor : getLabelColor
-		})
+		}, workUnit)
 	}, {
 		name : "Result by label",
 		width : "50%",
@@ -67,6 +67,6 @@ BoardBoard.prototype.charts = function(times) {
 			getId : getLabelId,
 			getName : getLabelName,
 			getColor : getLabelColor
-		})
+		}, workUnit)
 	} ] ]
 }

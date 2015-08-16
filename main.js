@@ -1,6 +1,7 @@
 var opts = {
 	type : "redirect",
-	name : "trellomino",
+	name : "Trellomino",
+	expiration : "never",
 	persist : true,
 	interactive : true,
 	success : function(result) {

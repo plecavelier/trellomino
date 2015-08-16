@@ -1,5 +1,5 @@
-ResultColumnChart = function(times, settings) {
-	ResultBarColumnChart.call(this, times, settings);
+ResultColumnChart = function(times, settings, workUnit) {
+	ResultBarColumnChart.call(this, times, settings, workUnit);
 }
 
 ResultColumnChart.prototype = new ResultBarColumnChart();

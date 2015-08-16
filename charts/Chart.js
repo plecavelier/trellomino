@@ -4,12 +4,11 @@ Highcharts.setOptions({
 	}
 });
 
-Chart = function(times, settings) {
+Chart = function(times, settings, workUnit) {
 	this._times = times;
 	this._settings = settings;
+	this._workUnit = workUnit;
 }
-
-// TODO : to transfer in config
 
 Chart.prototype.colors = {
 	"black" : "#4d4d4d",
@@ -103,12 +102,12 @@ Chart.prototype._createTimeline = function(times, name, color) {
 						.getTime()) {
 			var time = times[indexTime];
 
-			item.add("spent", time.getSpent());
-			item.add("estimate", time.getDelta());
+			item.add("spent", this._convertTime(time.getSpent()));
+			item.add("estimate", this._convertTime(time.getDelta()));
 			if (time.getCard().getSold() != null) {
-				item.add("sold", time.getSold());
+				item.add("sold", this._convertTime(time.getSold()));
 			} else {
-				item.add("sold", time.getDelta());
+				item.add("sold", this._convertTime(time.getDelta()));
 			}
 
 			indexTime++;
@@ -127,7 +126,11 @@ Chart.prototype._createTimeline = function(times, name, color) {
 Chart.prototype.round = function(value) {
 	if (value instanceof Object || $.isArray(value)) {
 		$.each(value, function(index, item) {
-			value[index] = Math.round(item * 100) / 100;
+			if ($.isArray(item)) {
+				value[index][1] = Math.round(item[1] * 100) / 100;
+			} else {
+				value[index] = Math.round(item * 100) / 100;
+			}
 		});
 	} else {
 		value = Math.round(value * 100) / 100;
@@ -139,4 +142,43 @@ Chart.prototype._getTimeDate = function(time) {
 	var date = new Date(time.getDate());
 	date.setHours(0, 0, 0, 0);
 	return date;
+}
+
+Chart.prototype.getworkUnitText = function() {
+	switch (this._workUnit) {
+	case "hours":
+		return "Hours";
+
+	case "days":
+		return "Days";
+	
+	default:
+		return "";
+	}
+}
+
+Chart.prototype.getworkUnitSuffix = function() {
+	switch (this._workUnit) {
+	case "hours":
+		return " hours";
+
+	case "days":
+		return " days";
+	
+	default:
+		return "";
+	}
+}
+
+Chart.prototype._convertTime = function(time) {
+	switch (this._workUnit) {
+	case "hours":
+		return time;
+
+	case "days":
+		return time / 8;
+	
+	default:
+		return time;
+	}
 }

@@ -1,5 +1,5 @@
-BurndownLineChart = function(times, settings) {
-	Chart.call(this, times, settings);
+BurndownLineChart = function(times, settings, workUnit) {
+	Chart.call(this, times, settings, workUnit);
 }
 
 BurndownLineChart.prototype = new Chart();
@@ -23,7 +23,7 @@ BurndownLineChart.prototype.subrender = function(containerId, timelines) {
 		},
 		yAxis : {
 			title : {
-				text : 'Hours'
+				text : this.getworkUnitText()
 			}
 		},
 		plotOptions : {
@@ -45,19 +45,19 @@ BurndownLineChart.prototype.subrender = function(containerId, timelines) {
 		},
 		series : [ {
 			"name" : "Sold",
-			"data" : timelines[0].total("sold"),
+			"data" : this.round(timelines[0].total("sold")),
 			"color" : this.color("marine")
 		}, {
 			"name" : "Estimate",
-			"data" : timelines[0].total("estimate"),
+			"data" : this.round(timelines[0].total("estimate")),
 			"color" : this.color("orange")
 		}, {
 			"name" : "Remain",
-			"data" : timelines[0].total("remain"),
+			"data" : this.round(timelines[0].total("remain")),
 			"color" : this.color("lime")
 		}, {
 			"name" : "Spent",
-			"data" : timelines[0].total("spent"),
+			"data" : this.round(timelines[0].total("spent")),
 			"color" : this.color("blue")
 		} ]
 	});

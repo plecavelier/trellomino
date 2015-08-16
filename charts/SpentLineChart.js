@@ -1,5 +1,5 @@
-SpentLineChart = function(times, settings) {
-	Chart.call(this, times, settings);
+SpentLineChart = function(times, settings, workUnit) {
+	Chart.call(this, times, settings, workUnit);
 }
 
 SpentLineChart.prototype = new Chart();
@@ -20,7 +20,7 @@ SpentLineChart.prototype.subrender = function(containerId, timelines) {
 		if (color != null) {
 			serieData.color = thiz.color(color);
 		}
-		serieData.data = timeline.get("spent");
+		serieData.data = thiz.round(timeline.get("spent"));
 		data.push(serieData);
 	});
 
@@ -38,11 +38,11 @@ SpentLineChart.prototype.subrender = function(containerId, timelines) {
 		yAxis : {
 			min : 0,
 			title : {
-				text : 'Hours'
+				text : this.getworkUnitText()
 			}
 		},
 		tooltip : {
-			valueSuffix : ' hours'
+			valueSuffix : this.getworkUnitSuffix()
 		},
 		plotOptions : {
 			line : {

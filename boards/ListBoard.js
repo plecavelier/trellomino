@@ -1,7 +1,7 @@
 ListBoard = function() {
 }
 
-ListBoard.prototype.charts = function(times) {
+ListBoard.prototype.charts = function(times, workUnit) {
 	var getCardId = function(time) {
 		return time.getCard().getId();
 	};
@@ -14,6 +14,6 @@ ListBoard.prototype.charts = function(times) {
 		chart : new ResultBarChart(times, {
 			getId : getCardId,
 			getName : getCardName
-		})
+		}, workUnit)
 	} ] ]
 }

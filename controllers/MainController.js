@@ -6,6 +6,8 @@ MainController = function(dataManager) {
 	this._list = null;
 	this._member = null;
 	this._label = null;
+	this._workUnit = null;
+	this._workUnits = ["hours", "days"];
 }
 
 MainController.prototype.start = function() {
@@ -25,21 +27,26 @@ MainController.prototype._update = function() {
 }
 
 MainController.prototype._initHeader = function() {
-	$("body").click(function() {
-		$(".menu .popover").fadeOut(300);
+	var thiz = this;
+	
+	var logOut = this._logOut;
+	$("#logOut").bind("click", logOut);
+	
+	$("#toMain").bind("click", function() {
+		thiz._toMain(thiz);
 	});
-	$(".menu").each(function(index, menu) {
-		$(menu).find("> a").click(function(e) {
-			e.stopPropagation();
-			$(".menu .popover").fadeOut(300);
-			$(menu).find(".popover").fadeIn(300, function() {
-				$(this).focus();
-			});
-		});
-		$(menu).find(".popover").click(function(e) {
-			e.stopPropagation();
+
+	$.each(this._workUnits, function(index, item) {
+		$("#workUnit-" + item).on("click", function(e) {
+			thiz._changeWorkUnit(item);
+			thiz._update();
 		});
 	});
+	if (localStorage.getItem("workUnit") != null) {
+		this._changeWorkUnit(localStorage.getItem("workUnit"));
+	} else {
+		this._changeWorkUnit("hours");
+	}
 }
 
 MainController.prototype._updateHeader = function() {
@@ -135,7 +142,7 @@ MainController.prototype._updateBoard = function() {
 	var times = this._filter();
 	var board = this._chooseBoard();
 
-	var charts = board.charts(times);
+	var charts = board.charts(times, this._workUnit);
 	var chartsToRender = [];
 
 	var html = "";
@@ -202,4 +209,27 @@ MainController.prototype._filter = function() {
 		});
 	});
 	return this._dataManager.sortTimes(times);
+}
+
+MainController.prototype._changeWorkUnit = function(workUnit) {
+	localStorage.setItem("workUnit", workUnit);
+	this._workUnit = workUnit;
+	$.each(this._workUnits, function(index, item) {
+		$("#workUnit-" + item + " .glyphicon").attr("class", "glyphicon glyphicon-none");
+	});
+	$("#workUnit-" + workUnit + " .glyphicon").attr("class", "glyphicon glyphicon-ok");
+}
+
+MainController.prototype._toMain = function(thiz) {
+	thiz._org = null;
+	thiz._board = null;
+	thiz._list = null;
+	thiz._member = null;
+	thiz._label = null;
+	thiz._update();
+}
+
+MainController.prototype._logOut = function() {
+	localStorage.removeItem("trello_token");
+	document.location.href = "index.html";
 }

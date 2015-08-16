@@ -1,5 +1,5 @@
-SpentPieChart = function(times, settings) {
-	Chart.call(this, times, settings);
+SpentPieChart = function(times, settings, workUnit) {
+	Chart.call(this, times, settings, workUnit);
 }
 
 SpentPieChart.prototype = new Chart();
@@ -20,7 +20,7 @@ SpentPieChart.prototype.subrender = function(containerId, timelines) {
 		if (color != null) {
 			serieData.color = thiz.color(color);
 		}
-		serieData.y = timeline.sum("spent");
+		serieData.y = thiz.round(timeline.sum("spent"));
 		data.push(serieData);
 	});
 
@@ -34,7 +34,7 @@ SpentPieChart.prototype.subrender = function(containerId, timelines) {
 							type : 'pie'
 						},
 						tooltip : {
-							pointFormat : '<b>{point.y:.1f}</b> hours (<b>{point.percentage:.1f}%</b>)'
+							pointFormat : '<b>{point.y:.1f}</b>' + this.getworkUnitSuffix() + ' (<b>{point.percentage:.1f}%</b>)'
 						},
 						title : {
 							text : ''
@@ -54,7 +54,7 @@ SpentPieChart.prototype.subrender = function(containerId, timelines) {
 							}
 						},
 						series : [ {
-							name : "Hours",
+							name : this.getworkUnitText(),
 							colorByPoint : true,
 							data : data
 						} ]
