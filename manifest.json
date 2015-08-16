@@ -8,7 +8,7 @@
 		]
 	},
 	"browser_action" : {
-		
+		"default_icon": "img/icon-trello-blue-24x24.png"
 	},
 	"permissions":[
 		"tabs"

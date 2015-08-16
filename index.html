@@ -4,6 +4,8 @@
 
 <title>Trellomino</title>
 
+<link rel="shortcut icon" href="img/icon-trello-blue-16x16.gif?v=3" type="image/x-icon" />
+
 <link rel="stylesheet" type="text/css"
 	href="lib/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css"
@@ -48,6 +50,8 @@
 <body>
 
 	<div id="progress" class="prog">
+		<div class="prog-title"><img src="img/icon-duo-blue-84x40.png" alt="" /> Trellomino</div>
+		<div class="prog-subtitle">Charts for Trello &amp; Plus for Trello</div>
 		<div class="prog-bar">
 			<div id="complete" class="prog-bar-complete"></div>
 			<div class="prog-bar-percent">
@@ -62,7 +66,7 @@
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a class="navbar-brand" href="#">Logo</a>
+					<a class="navbar-brand" href="#"><img src="img/icon-duo-white-50x24.png" alt="" />Trellomino</a>
 				</div>
 
 				<div class="collapse navbar-collapse">
@@ -115,7 +119,11 @@
 							aria-expanded="false"><span class="glyphicon glyphicon-cog"></span>
 								Settings <span class="caret"></span></a>
 							<ul class="dropdown-menu">
-								<li><a href="#">Working unit</a></li>
+								<li class="dropdown-header">Work units</li>
+								<li><a href="#"><span class="glyphicon glyphicon-ok"></span> Hours</a></li>
+								<li><a href="#"><span class="glyphicon glyphicon-none"></span> Days <span class="dropdown-desc">(1 day = 8 hours)</span></a></li>
+								<li class="divider" role="separator"></li>
+								<li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
 							</ul></li>
 					</ul>
 				</div>
@@ -128,7 +136,7 @@
 			</div>
 			<div class="title-text">
 				<h1></h1>
-				<h2>No filter</h2>
+				<!-- <h2>No filter</h2> -->
 			</div>
 		</div>
 

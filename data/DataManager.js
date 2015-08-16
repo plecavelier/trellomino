@@ -209,7 +209,7 @@ DataManager.prototype._finalizeLoad = function() {
 		var sold = thiz._parseSold(card.getName());
 		
 		// Set card estimate
-		if (sold) {
+		if (sold !== false) {
 			var sortedTimesByDate = thiz.sortTimes(card.getTimes());
 			var id = "sold_" + card.getId();
 			var date = new Date(card.getCreationDate());
