@@ -23,8 +23,8 @@ DataManager.prototype.load = function(callback) {
 	// Get my boards and their organization from Trello API
 	Trello.get("members/me", {
 		"fields" : "",
-		"boards" : "organization,members",
-		"board_fields" : "name",
+		"boards" : "organization,members,open",
+		"board_fields" : "name,closed",
 		"board_organization" : true,
 		"board_organization_fields" : "displayName"
 	}, function(result) {
@@ -35,6 +35,10 @@ DataManager.prototype.load = function(callback) {
 		thiz._datas.addOrganization(myOrganization);
 
 		$.each(result.boards, function(index, board) {
+			
+			if (board.closed) {
+				return;
+			}
 			
 			if ("organization" in board) {
 				if (!thiz._datas.organizationExists(board.organization.id)) {
@@ -61,46 +65,42 @@ DataManager.prototype.load = function(callback) {
 				console.log("Get board " + board.id + " success");
 				
 				// Define organization ID ("my" if null)
-				var idOrganization = result.idOrganization != null ? result.idOrganization : 'my';
+				var organizationExists = result.idOrganization != null&& thiz._datas.organizationExists(result.idOrganization);
+				var idOrganization = organizationExists ? result.idOrganization : 'my';
+				var organizationData = thiz._datas.getOrganization(idOrganization);
 				
-				if (thiz._datas.organizationExists(idOrganization)) {
+				// Add board to organization
+				var boardData = new Board(result.id, result.name, result.prefs.background);
+				organizationData.addBoard(boardData);
+				
+				$.each(result.lists, function(index, list) {
+					// Add list to board
+					var listData = new List(list.id, list.name, list.pos);
+					boardData.addList(listData);
+				});
+				
+				$.each(result.labels, function(index, label) {
+					// Add label to board
+					var labelData = new Label(label.id, label.name, label.color);
+					boardData.addLabel(labelData);
+				});
+				
+				$.each(result.cards, function(index, card) {
+					// Add card to list and board
+					var cardData = new Card(card.id, card.name);
+					var listData = boardData.getList(card.idList);
+					listData.addCard(cardData);
+					boardData.addCard(cardData);
 					
-					var organizationData = thiz._datas.getOrganization(idOrganization);
-					
-					// Add board to organization
-					var boardData = new Board(result.id, result.name, result.prefs.background);
-					organizationData.addBoard(boardData);
-					
-					$.each(result.lists, function(index, list) {
-						// Add list to board
-						var listData = new List(list.id, list.name, list.pos);
-						boardData.addList(listData);
-					});
-					
-					$.each(result.labels, function(index, label) {
+					$.each(card.idLabels, function(index, idLabel) {
 						// Add label to board
-						var labelData = new Label(label.id, label.name, label.color);
-						boardData.addLabel(labelData);
+						var label = boardData.getLabel(idLabel);
+						cardData.addLabel(label);
 					});
+				});
+				
+				thiz._loadTimes(boardData, 0);
 					
-					$.each(result.cards, function(index, card) {
-						// Add card to list and board
-						var cardData = new Card(card.id, card.name);
-						var listData = boardData.getList(card.idList);
-						listData.addCard(cardData);
-						boardData.addCard(cardData);
-						
-						$.each(card.idLabels, function(index, idLabel) {
-							// Add label to board
-							var label = boardData.getLabel(idLabel);
-							cardData.addLabel(label);
-						});
-					});
-					
-					thiz._loadTimes(boardData, 0);
-				} else {
-					thiz._progress.removeTasks(1);
-				}
 				thiz._progress.removeTasks(1);
 				
 			}, function() {
@@ -231,7 +231,7 @@ DataManager.prototype._isRecurrent = function(cardName) {
 }
 
 DataManager.prototype._parseComment = function(comment) {
-	var regexp = new RegExp('plus!( *@[a-zA-Z0-9]+)?( *(-[0-9])+d)? *(-?[0-9]+\.?[0-9]*)/(-?[0-9]+\.?[0-9]*)', 'i');
+	var regexp = new RegExp('plus!( *@[a-zA-Z0-9]+)?( *(-[0-9]+)d)? *(-?[0-9]+\.?[0-9]*)/(-?[0-9]+\.?[0-9]*)', 'i');
 	var match = regexp.exec(comment);
 	if (match) {
 		var tokens = {
@@ -275,7 +275,7 @@ DataManager.prototype.sortTimes = function(times) {
 	times = _.sortBy(times, function(time) {
 		return "" + time.getDate().getTime() + "-" + time.getCommentDate().getTime();
 	});
-	return times/*.reverse()*/;
+	return times/* .reverse() */;
 }
 
 DataManager.prototype._getTimeDate = function(time) {

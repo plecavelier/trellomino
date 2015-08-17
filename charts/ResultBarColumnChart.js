@@ -88,11 +88,26 @@ ResultBarColumnChart.prototype.subrender = function(containerId, timelines) {
 					color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
 				},
 				formatter : function() {
-					var spent = this.points['4,' + this.x][1] - this.points['4,' + this.x][0];
-					var remain = this.points['3,' + this.x][1] - this.points['3,' + this.x][0];
-					var loss = this.points['2,' + this.x][1] - this.points['2,' + this.x][0];
-					var estimLoss = this.points['1,' + this.x][1] - this.points['1,' + this.x][0];
+					var spent = 0;
+					var remain = 0;
+					var loss = 0;
+					var estimLoss = 0;
+					if (('4,' + this.x) in this.points) {
+						spent = this.points['4,' + this.x][1] - this.points['4,' + this.x][0];
+					}
+					if (('3,' + this.x) in this.points) {
+						remain = this.points['3,' + this.x][1] - this.points['3,' + this.x][0];
+					}
+					if (('2,' + this.x) in this.points) {
+						loss = this.points['2,' + this.x][1] - this.points['2,' + this.x][0];
+					}
+					if (('1,' + this.x) in this.points) {
+						estimLoss = this.points['1,' + this.x][1] - this.points['1,' + this.x][0];
+					}
 					var total = spent + remain + loss + estimLoss;
+					if (total == 0) {
+						return "";
+					}
 					var percent = Math.floor((spent + loss) / total * 100);
 					return percent + "%";
 				}
