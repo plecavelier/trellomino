@@ -180,7 +180,8 @@ DataManager.prototype._loadTimes = function(boardData, page) {
 		}
 		
 	}, function() {
-		console.log("Get board actions " + boardData.getId() + " failed");
+		console.log("Get board actions " + boardData.getId() + " failed. Ignore board.");
+		thiz._progress.removeTasks(1);
 	});
 }
 
