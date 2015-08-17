@@ -14,8 +14,17 @@ body {
 }
 
 .glyphicon-none:before {
-    content: "\21222";
-    color: transparent !important;
+	content: "\212222";
+	color: transparent !important;
+}
+
+.todo {
+	background: white;
+	text-align: center;
+	padding: 179px 0;
+	font-size: 30px;
+	font-weight: bold;
+	color: #CCCCCC;
 }
 
 

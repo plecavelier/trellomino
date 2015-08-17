@@ -30,5 +30,9 @@ MainBoard.prototype.charts = function(times, workUnit) {
 			getId : getOrganizationId,
 			getName : getOrganizationName
 		}, workUnit)
+	} ], [ {
+		name : "Members timesheet",
+		width : "100%",
+		chart : new TodoChart(times, {}, workUnit)
 	} ] ]
 }

@@ -43,6 +43,9 @@ Chart.prototype.render = function(containerId) {
 		// Group times
 		$.each(this._times, function(index, time) {
 			var id = thiz._settings.getId(time);
+			if (id == null) {
+				return;
+			}
 			if (!(id in groups)) {
 				groups[id] = {};
 				groups[id].name = thiz._settings.getName(time);
@@ -181,4 +184,8 @@ Chart.prototype._convertTime = function(time) {
 	default:
 		return time;
 	}
+}
+
+Chart.prototype.getDefaultHeight = function() {
+	return 400;
 }

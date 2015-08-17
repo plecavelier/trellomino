@@ -59,12 +59,10 @@ MainController.prototype._updateHeader = function() {
 
 	orgMenu.toggle(true);
 	boardMenu.toggle(this._org != null);
-	// listSelect.toggle(this._board != null);
-	listMenu.toggle(false);
+	listMenu.toggle(this._board != null);
 	// memberSelect.toggle(true);
 	memberMenu.toggle(false);
-	// labelSelect.toggle(this._board != null);
-	labelMenu.toggle(false);
+	labelMenu.toggle(this._board != null);
 
 	this._completeMenu(orgMenu, "org", this._datas.getOrganizations());
 	if (this._org != null) {
@@ -106,7 +104,8 @@ MainController.prototype._completeMenu = function(menu, type, values) {
 
 			case "list":
 				thiz._list = value;
-				// TODO
+				thiz._member = null;
+				thiz._label = null;
 				break;
 
 			case "member":
@@ -116,7 +115,8 @@ MainController.prototype._completeMenu = function(menu, type, values) {
 
 			case "label":
 				thiz._label = value;
-				// TODO
+				thiz._member = null;
+				thiz._list = null;
 				break;
 			}
 			thiz._update();
@@ -126,7 +126,13 @@ MainController.prototype._completeMenu = function(menu, type, values) {
 }
 
 MainController.prototype._updateTitle = function() {
-	if (this._board != null) {
+	if (this._label != null) {
+		$("#title .glyphicon").attr("class", "glyphicon glyphicon-tag");
+		$("#title h1").html("Label " + this._label.getDisplayedLabel());
+	} else if (this._list != null) {
+		$("#title .glyphicon").attr("class", "glyphicon glyphicon-align-justify");
+		$("#title h1").html("List " + this._list.getDisplayedLabel());
+	} else if (this._board != null) {
 		$("#title .glyphicon").attr("class", "glyphicon glyphicon-th");
 		$("#title h1").html("Board " + this._board.getDisplayedLabel());
 	} else if (this._org != null) {
@@ -174,7 +180,9 @@ MainController.prototype._updateBoard = function() {
 }
 
 MainController.prototype._chooseBoard = function() {
-	if (this._list != null) {
+	if (this._label != null) {
+		return new LabelBoard();
+	} else if (this._list != null) {
 		return new ListBoard();
 	} else if (this._board != null) {
 		return new BoardBoard();
@@ -201,6 +209,10 @@ MainController.prototype._filter = function() {
 					return;
 				}
 				$.each(list.getCards(), function(index, card) {
+					if (thiz._label != null && (card.getLabels().length == 0
+							|| card.getLabels()[0].getId() != thiz._label.getId())) {
+						return;
+					}
 					$.each(card.getTimes(), function(index, time) {
 						times.push(time);
 					});

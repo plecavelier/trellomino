@@ -65,10 +65,16 @@ ResultBarColumnChart.prototype.subrender = function(containerId, timelines) {
 		data : this.round(datas['spent']),
 		color : this.color("marine")
 	} ];
+	
+	var height = this.getDefaultHeight();
+	if ("dynamicHeight" in this._settings && this._settings['dynamicHeight']) {
+		height = Math.max(height, timelines.length * 25);
+	}
 
 	$("#" + containerId).highcharts({
 		chart : {
-			type : thiz.type
+			type : thiz.type,
+			height : height
 		},
 		title : {
 			text : ''

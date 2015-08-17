@@ -30,6 +30,12 @@ BoardBoard.prototype.charts = function(times, workUnit) {
 			return time.getCard().getLabels()[0].getColor();
 		}
 	};
+	var getCardId = function(time) {
+		return time.getCard().getId();
+	};
+	var getCardName = function(time) {
+		return time.getCard().getName();
+	};
 	return [ [ {
 		name : "Board result",
 		width : "20%",
@@ -38,7 +44,7 @@ BoardBoard.prototype.charts = function(times, workUnit) {
 		name : "Burndown chart of board",
 		width : "80%",
 		chart : new BurndownLineChart(times, {}, workUnit)
-	} ],/* [ {
+	} ], [ {
 		name : "Spent by list",
 		width : "50%",
 		chart : new SpentLineChart(times, {
@@ -52,7 +58,7 @@ BoardBoard.prototype.charts = function(times, workUnit) {
 			getId : getListId,
 			getName : getListName
 		})
-	} ],*/ [ {
+	} ], [ {
 		name : "Labels distribution",
 		width : "50%",
 		chart : new SpentPieChart(times, {
@@ -67,6 +73,14 @@ BoardBoard.prototype.charts = function(times, workUnit) {
 			getId : getLabelId,
 			getName : getLabelName,
 			getColor : getLabelColor
+		}, workUnit)
+	} ], [ {
+		name : "Result by card",
+		width : "100%",
+		chart : new ResultBarChart(times, {
+			getId : getCardId,
+			getName : getCardName,
+			dynamicHeight : true
 		}, workUnit)
 	} ] ]
 }

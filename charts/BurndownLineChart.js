@@ -11,6 +11,9 @@ BurndownLineChart.prototype.hasSeries = false;
 BurndownLineChart.prototype.subrender = function(containerId, timelines) {
 
 	$("#" + containerId).highcharts({
+		chart: {
+			type: 'spline'
+		},
 		title : {
 			text : ''
 		// center
@@ -27,7 +30,7 @@ BurndownLineChart.prototype.subrender = function(containerId, timelines) {
 			}
 		},
 		plotOptions : {
-			line : {
+			spline : {
 				marker : {
 					enabled : false
 				}
