@@ -8,6 +8,20 @@ MainBoard.prototype.charts = function(times, workUnit) {
 	var getOrganizationName = function(time) {
 		return time.getCard().getBoard().getOrganization().getName();
 	};
+	var getMemberId = function(time) {
+		if (time.getMember() != null) {
+			return time.getMember().getId();
+		} else {
+			return null;
+		}
+	};
+	var getMemberName = function(time) {
+		if (time.getMember() != null) {
+			return time.getMember().getFullName();
+		} else {
+			return null;
+		}
+	};
 	return [ [ {
 		name : "Global result",
 		width : "20%",
@@ -33,6 +47,9 @@ MainBoard.prototype.charts = function(times, workUnit) {
 	} ], [ {
 		name : "Members timesheet",
 		width : "100%",
-		chart : new TodoChart(times, {}, workUnit)
+		chart : new TimesheetChart(times, {
+			getId : getMemberId,
+			getName : getMemberName
+		}, workUnit)
 	} ] ]
 }

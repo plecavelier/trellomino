@@ -2,6 +2,7 @@ Timeline = function(name, color) {
 	this._name = name;
 	this._color = color;
 	this._items = [];
+	this._itemsIndex = {};
 }
 
 Timeline.prototype.getName = function() {
@@ -22,6 +23,14 @@ Timeline.prototype.setColor = function(color) {
 
 Timeline.prototype.addItem = function(item) {
 	this._items.push(item);
+	this._itemsIndex[item.getDate().getTime()] = item;
+}
+
+Timeline.prototype.getItem = function(date) {
+	if (date.getTime() in this._itemsIndex) {
+		return this._itemsIndex[date.getTime()];
+	}
+	return null;
 }
 
 Timeline.prototype.get = function(key) {

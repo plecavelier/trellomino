@@ -254,3 +254,48 @@ body {
 .board-chart {
 	overflow: hidden;
 }
+
+
+
+/* TIMESHEET */
+
+.timesheet {
+	background: white;
+	padding: 20px;
+	padding-top: 0;
+}
+
+.timesheet table {
+	width: 100%;
+}
+
+.timesheet td,
+.timesheet th {
+	text-align: center;
+	font-size: 14px;
+	color: #4d4d4d;
+}
+
+.timesheet td {
+	border-top: solid 1px #DDDDDD;
+	padding: 8px 3px;
+}
+
+.timesheet th {
+	padding: 10px 3px;
+	font-size: 13px;
+}
+
+.timesheet td.serie {
+	text-align: right;
+}
+
+.timesheet .odd td {
+	background: #F9F9F9;
+}
+
+.timesheet td.weekend,
+.timesheet th.weekend {
+	background: #FFF0E8;
+	color: #E87127;
+}
