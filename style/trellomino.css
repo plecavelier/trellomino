@@ -104,16 +104,16 @@ body {
 }
 
 .navbar-nav > li > a, .navbar-brand {
-    padding-top: 10px !important; 
-    padding-bottom: 0 !important;
-    height: 40px;
+	padding-top: 15px !important; 
+	padding-bottom: 0 !important;
+	height: 50px;
 }
 
 .navbar-default .navbar-nav>li>a,
 .navbar-default .navbar-nav>li>a.dropdown-toggle {
 	color: #f3f3f3;
 	font-weight: 700;
-	font-size: 14px;
+	font-size: 15px;
 	text-shadow: none;
 }
 
@@ -125,7 +125,7 @@ body {
 .navbar-default .navbar-nav>.open>a:focus,
 .navbar-default .navbar-nav>.open>a:hover {
 	color: #f3f3f3;
-    background: #4D97C1;
+	background: #4D97C1;
 }
 
 .dropdown-menu>li>a {
@@ -281,13 +281,18 @@ body {
 	padding: 8px 3px;
 }
 
+.timesheet tr:first-child td {
+	border-top: 0;
+}
+
 .timesheet th {
 	padding: 10px 3px;
 	font-size: 13px;
+	border-bottom: solid 1px #BBBBBB;
 }
 
 .timesheet td.serie {
-	text-align: right;
+	text-align: left;
 }
 
 .timesheet .odd td {
@@ -298,4 +303,10 @@ body {
 .timesheet th.weekend {
 	background: #FFF0E8;
 	color: #E87127;
+}
+
+.timesheet tr.total td {
+	font-weight: bold;
+	border-top: solid 1px #BBBBBB;
+	font-size: 13px;
 }

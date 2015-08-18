@@ -51,19 +51,19 @@ MainController.prototype._initHeader = function() {
 
 MainController.prototype._updateHeader = function() {
 
+	var memberMenu = $("#memberMenu");
 	var orgMenu = $("#orgMenu");
 	var boardMenu = $("#boardMenu");
 	var listMenu = $("#listMenu");
-	var memberMenu = $("#memberMenu");
 	var labelMenu = $("#labelMenu");
 
+	memberMenu.toggle(true);
 	orgMenu.toggle(true);
 	boardMenu.toggle(this._org != null);
 	listMenu.toggle(this._board != null);
-	// memberSelect.toggle(true);
-	memberMenu.toggle(false);
 	labelMenu.toggle(this._board != null);
 
+	this._completeMenu(memberMenu, "member", this._datas.getMembers());
 	this._completeMenu(orgMenu, "org", this._datas.getOrganizations());
 	if (this._org != null) {
 		this._completeMenu(boardMenu, "board", this._org.getBoards());
@@ -71,8 +71,6 @@ MainController.prototype._updateHeader = function() {
 	if (this._board != null) {
 		this._completeMenu(listMenu, "list", this._board.getLists());
 	}
-
-	this._completeMenu(memberMenu, "member", this._datas.getMembers());
 	if (this._board != null) {
 		this._completeMenu(labelMenu, "label", this._board.getLabels());
 	}
@@ -110,7 +108,10 @@ MainController.prototype._completeMenu = function(menu, type, values) {
 
 			case "member":
 				thiz._member = value;
-				// TODO
+				thiz._org = null;
+				thiz._board = null;
+				thiz._list = null;
+				thiz._label = null;
 				break;
 
 			case "label":
@@ -138,6 +139,9 @@ MainController.prototype._updateTitle = function() {
 	} else if (this._org != null) {
 		$("#title .glyphicon").attr("class", "glyphicon glyphicon-home");
 		$("#title h1").html("Organization " + this._org.getDisplayedLabel());
+	} else if (this._member != null) {
+		$("#title .glyphicon").attr("class", "glyphicon glyphicon-user");
+		$("#title h1").html("Member " + this._member.getDisplayedLabel());
 	} else {
 		$("#title .glyphicon").attr("class", "glyphicon glyphicon-home");
 		$("#title h1").html("Organizations");
@@ -188,6 +192,8 @@ MainController.prototype._chooseBoard = function() {
 		return new BoardBoard();
 	} else if (this._org != null) {
 		return new OrganizationBoard();
+	} else if (this._member != null) {
+		return new MemberBoard();
 	} else {
 		return new MainBoard();
 	}
@@ -214,6 +220,10 @@ MainController.prototype._filter = function() {
 						return;
 					}
 					$.each(card.getTimes(), function(index, time) {
+						if (thiz._member != null && (time.getMember() == null
+								|| time.getMember().getId() != thiz._member.getId())) {
+							return;
+						}
 						times.push(time);
 					});
 				});
