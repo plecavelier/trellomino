@@ -1,6 +1,8 @@
 DataManager = function() {
 	// Init datas
 	this._datas = new Datas();
+	this._limit = 1000;
+	this._requests = 0;
 	var thiz = this;
 }
 
@@ -21,7 +23,7 @@ DataManager.prototype.load = function(callback) {
 	console.log("Get member me");
 	
 	// Get my boards and their organization from Trello API
-	Trello.get("members/me", {
+	thiz._request("members/me", {
 		"fields" : "",
 		"boards" : "organization,members,open",
 		"board_fields" : "name,closed",
@@ -51,10 +53,10 @@ DataManager.prototype.load = function(callback) {
 			}
 
 			thiz._progress.addTasks(2);
-			console.log("Get board " + board.id);
+			console.log("Get board \"" + board.name + "\" (" + board.id + ")");
 			
 			// Get lists, labels and cards of board from Trello API
-			Trello.get("boards/" + board.id, {
+			thiz._request("boards/" + board.id, {
 				"fields" : "name,idOrganization,prefs",
 				"lists" : "all",
 				"list_fields" : "name,pos",
@@ -62,7 +64,7 @@ DataManager.prototype.load = function(callback) {
 				"cards" : "all",
 				"card_fields" : "name,idLabels,idList"
 			}, function(result) {
-				console.log("Get board " + board.id + " success");
+				console.log("Get board \"" + board.name + "\" (" + board.id + ") success");
 				
 				// Define organization ID ("my" if null)
 				var organizationExists = result.idOrganization != null&& thiz._datas.organizationExists(result.idOrganization);
@@ -99,38 +101,40 @@ DataManager.prototype.load = function(callback) {
 					});
 				});
 				
-				thiz._loadTimes(boardData, 0);
+				thiz._loadTimes(boardData, null);
 					
 				thiz._progress.removeTasks(1);
 				
 			}, function() {
-				console.log("Get board " + board.id + " failed");
+				console.error("Get board \"" + board.name + "\" (" + board.id + ") failed");
 			});
 		});
 
 		thiz._progress.removeTasks(1);
 		
 	}, function() {
-		console.log("Get member me failed");
+		console.error("Get member me failed");
 	});
 }
 
-DataManager.prototype._loadTimes = function(boardData, page) {
+DataManager.prototype._loadTimes = function(boardData, before) {
 	var thiz = this;
-	
-	console.log("Get board actions " + boardData.getId());
+
+	console.log("Get actions before " + before + " for board \"" + boardData.getName() + "\" (" + boardData.getId() + ")");
 	
 	// Get board comments from Trello API
-	Trello.get("boards/" + boardData.getId() + "/actions", {
+	thiz._request("boards/" + boardData.getId() + "/actions", {
 		filter : "commentCard,createCard",
 		fields : "data,date,type",
 		member : false,
 		memberCreator : true,
 		memberCreator_fields : "username,fullName",
-		page : page,
-		limit : 1000
+		before : before,
+		limit : thiz._limit
 	}, function(result) {
-		console.log("Get board actions " + boardData.getId() + " success");
+		console.log("Get actions before " + before + " for board \"" + boardData.getName() + "\" (" + boardData.getId() + ") success (" + result.length + " actions)");
+		
+		var lastDate = null;
 		$.each(result, function(index, action) {
 			if (boardData.cardExists(action.data.card.id)) {
 				var cardData = boardData.getCard(action.data.card.id);
@@ -171,18 +175,25 @@ DataManager.prototype._loadTimes = function(boardData, page) {
 					cardData.addTime(timeData);
 				}
 			}
+			lastDate = action.date;
 		});
 		
-		if (result.length == 1000) {
-			thiz._loadTimes(boardData, page + 1);
+		if (result.length == thiz._limit) {
+			thiz._loadTimes(boardData, lastDate);
 		} else {
 			thiz._progress.removeTasks(1);
 		}
 		
 	}, function() {
-		console.log("Get board actions " + boardData.getId() + " failed. Ignore board.");
+		console.error("Get actions before " + before + " for board \"" + boardData.getName() + "\" (" + boardData.getId() + ") failed");
 		thiz._progress.removeTasks(1);
 	});
+}
+
+DataManager.prototype._request = function(url, params, success, error) {
+	this._requests++;
+	console.log("Execute request " + this._requests);
+	Trello.get(url, params, success, error);
 }
 
 DataManager.prototype._finalizeLoad = function() {
