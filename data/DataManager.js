@@ -124,7 +124,7 @@ DataManager.prototype._loadTimes = function(boardData, before) {
 	
 	// Get board comments from Trello API
 	thiz._request("boards/" + boardData.getId() + "/actions", {
-		filter : "commentCard,createCard",
+		filter : "commentCard,createCard,copyCard",
 		fields : "data,date,type",
 		member : false,
 		memberCreator : true,
@@ -139,7 +139,7 @@ DataManager.prototype._loadTimes = function(boardData, before) {
 			if (boardData.cardExists(action.data.card.id)) {
 				var cardData = boardData.getCard(action.data.card.id);
 				
-				if (action.type == "createCard") {
+				if (action.type == "createCard" || action.type == "copyCard") {
 					cardData.setCreationDate(new Date(action.date));
 					return;
 				}
